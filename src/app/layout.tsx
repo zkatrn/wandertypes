@@ -23,7 +23,7 @@ export default function RootLayout({
         {FEATURE_FLAGS.GOOGLE_PLACES_AUTOCOMPLETE && (
           <Script
             id="google-maps"
-            src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
+            src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&loading=async`}
             strategy="beforeInteractive"
           />
         )}

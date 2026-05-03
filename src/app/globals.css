@@ -105,3 +105,9 @@ body {
 .animate-twinkle {
   animation: twinkle 3s ease-in-out infinite alternate;
 }
+
+/* Google Places (New) — host fills survey destination row */
+gmp-place-autocomplete {
+  display: block;
+  width: 100%;
+}
