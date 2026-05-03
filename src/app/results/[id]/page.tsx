@@ -6,8 +6,9 @@ import { getTripSession } from "@/lib/firestore";
 import { getTheme } from "@/lib/themes";
 import { WandertypeBanner } from "@/components/results/WandertypeBanner";
 import { DestinationCard } from "@/components/results/DestinationCard";
-import { AccordionSection } from "@/components/results/AccordionSection";
+import { ResultsInsightsAccordions } from "@/components/results/ResultsInsightsAccordions";
 import { TwinklingStars } from "@/components/results/TwinklingStars";
+import { comparisonGridClassName } from "@/lib/resultsLayout";
 import type { TripInterpretation } from "@/types/interpretation";
 import { AlertCircle } from "lucide-react";
 
@@ -76,16 +77,17 @@ export default function SharedResultsPage() {
     <>
       {/* Background image with parallax */}
       <div
-        className="fixed inset-0 z-0 bg-parallax"
+        className="fixed inset-0 z-0 bg-parallax pointer-events-none"
         style={{
           backgroundImage: `url(${backgroundImage})`,
           backgroundPosition: 'center',
           backgroundAttachment: 'scroll',
           filter: 'opacity(0.5) saturate(0.5) brightness(1.15)',
         }}
+        aria-hidden
       />
-        
-        <div className="min-h-screen text-stone-900 relative">
+
+        <div className="min-h-screen text-stone-900 relative z-10">
           <TwinklingStars />
           <div className="relative z-10 max-w-5xl mx-auto px-6 py-12">
         {/* Wandertype Banner */}
@@ -97,156 +99,17 @@ export default function SharedResultsPage() {
         </div>
 
         {/* Destination Cards Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-12">
+        <div
+          className={`${comparisonGridClassName(
+            interpretation.comparisonCards.length
+          )} mb-12`}
+        >
           {interpretation.comparisonCards.map((card, index) => (
             <DestinationCard key={card.destinationName} card={card} index={index} />
           ))}
         </div>
 
-        {/* Accordions */}
-        <div className="space-y-4">
-          <AccordionSection
-            title="🗺️ Adventure Options by Base"
-            defaultOpen={false}
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div>
-                <h4 className="text-sm font-medium text-stone-900 mb-3 font-serif">🌋 La Fortuna / Arenal</h4>
-                <ul className="space-y-2 text-xs">
-                  <li className="pb-2 border-b border-white/5">
-                    <a href="#"                     className="text-primary hover:text-primary-dark transition-colors">
-                      <span className="text-primary font-medium">Arenal Volcano ★</span>
-                    </a>
-                    <span className="text-stone-600"> — 10–25 min</span>
-                  </li>
-                  <li className="pb-2 border-b border-white/5">
-                    <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                      <span className="text-amber-400 font-medium">La Fortuna Waterfall ★</span>
-                    </a>
-                    <span className="text-blue-200"> — 10–20 min</span>
-                  </li>
-                  <li className="pb-2 border-b border-white/5">
-                    <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                      <span className="text-amber-400 font-medium">Hot Springs ★</span>
-                    </a>
-                    <span className="text-blue-200"> — 10–25 min</span>
-                  </li>
-                  <li className="pb-2 border-b border-white/5">
-                    <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                      Ziplining
-                    </a>
-                    <span className="text-blue-200"> — 10–30 min</span>
-                  </li>
-                  <li>
-                    <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                      Whitewater Rafting
-                    </a>
-                    <span className="text-blue-200"> — 30–90 min</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="text-sm font-medium text-amber-400 mb-3">🌊 Playa Hermosa / Guanacaste</h4>
-                <ul className="space-y-2 text-xs">
-                  <li className="pb-2 border-b border-white/5">
-                    <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                      Playa Hermosa beach
-                    </a>
-                    <span className="text-blue-200"> — 0–10 min</span>
-                  </li>
-                  <li className="pb-2 border-b border-white/5">
-                    <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                      Boat / snorkeling tours
-                    </a>
-                    <span className="text-blue-200"> — 15–45 min</span>
-                  </li>
-                  <li className="pb-2 border-b border-white/5">
-                    <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                      <span className="text-amber-400 font-medium">Rincón de la Vieja ★</span>
-                    </a>
-                    <span className="text-blue-200"> — 1h 30m–2h</span>
-                  </li>
-                  <li className="pb-2 border-b border-white/5">
-                    <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                      Catamaran sunset cruise
-                    </a>
-                    <span className="text-blue-200"> — 15–45 min</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="text-sm font-medium text-amber-400 mb-3">🌿 Savegre / Dominical / Uvita</h4>
-                <ul className="space-y-2 text-xs">
-                  <li className="pb-2 border-b border-white/5">
-                    <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                      <span className="text-amber-400 font-medium">Nauyaca Waterfalls ★</span>
-                    </a>
-                    <span className="text-blue-200"> — 30–60 min</span>
-                  </li>
-                  <li className="pb-2 border-b border-white/5">
-                    <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                      <span className="text-amber-400 font-medium">Manuel Antonio Park ★</span>
-                    </a>
-                    <span className="text-blue-200"> — 60–90 min</span>
-                  </li>
-                  <li className="pb-2 border-b border-white/5">
-                    <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                      Whale / boat tours
-                    </a>
-                    <span className="text-blue-200"> — 45–75 min</span>
-                  </li>
-                  <li>
-                    <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                      Beach hopping
-                    </a>
-                    <span className="text-blue-200"> — 20–90 min</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </AccordionSection>
-
-          <AccordionSection
-            title="💡 Things You Might Not Be Thinking About"
-            defaultOpen={false}
-          >
-            <div className="space-y-3">
-              {interpretation.tradeoffWarnings.map((warning, index) => (
-                <div
-                  key={index}
-                  className="p-3 bg-stone-50/95 border border-stone-200 rounded-lg text-xs text-stone-700 leading-relaxed"
-                >
-                  {warning}
-                </div>
-              ))}
-            </div>
-          </AccordionSection>
-
-          <AccordionSection
-            title="⭐ Bottom Line"
-            defaultOpen={false}
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5">
-              {interpretation.comparisonCards.map((card, index) => (
-                <div
-                  key={card.destinationName}
-                  className={`p-5 bg-stone-50/95 border rounded-lg border-l-4 ${
-                    index === 0 ? 'border-l-orange-500' :
-                    index === 1 ? 'border-l-cyan-500' :
-                    'border-l-green-500'
-                  } border-stone-200`}
-                >
-                  <h4 className="text-sm font-medium text-stone-900 mb-2 font-serif">
-                    {card.destinationName.split('/')[0].trim()}
-                  </h4>
-                  <p className="text-xs text-stone-700 italic">{card.verdictGood}</p>
-                </div>
-              ))}
-            </div>
-          </AccordionSection>
-        </div>
+        <ResultsInsightsAccordions interpretation={interpretation} />
 
         {/* Footer */}
         <p className="text-center mt-12 text-xs text-stone-500 italic tracking-wide">

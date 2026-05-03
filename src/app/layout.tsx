@@ -32,7 +32,7 @@ export default function RootLayout({
         {isOnboardingPage && (
           <>
             <div 
-              className={`fixed inset-0 z-0 ${isLandingPage ? 'bg-parallax' : ''}`}
+              className={`fixed inset-0 z-0 pointer-events-none ${isLandingPage ? 'bg-parallax' : ''}`}
               style={{
                 backgroundImage: 'url(/bg.png)',
                 ...(isLandingPage
@@ -49,7 +49,7 @@ export default function RootLayout({
                     }),
               }}
             />
-            <div className="fixed inset-0 z-0 bg-white/25" />
+            <div className="fixed inset-0 z-0 bg-white/25 pointer-events-none" />
           </>
         )}
         

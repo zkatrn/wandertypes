@@ -64,7 +64,7 @@ export function Step6({
   const dealbreakerOptions = [
     { value: "swimmable_beach", label: "Must have a swimmable beach", icon: Waves },
     { value: "no_long_drives", label: "No long drives from the house to activities", icon: Car },
-    { value: "stunning_property", label: "The house or property has to be special", icon: Home },
+    { value: "stunning_property", label: "The hotel or property has to be special", icon: Home },
     { value: "beach_access", label: "Beach should be walkable from where we stay", icon: MapPin },
     { value: "adventure_density", label: "Lots of activities nearby — we want variety", icon: Compass },
     { value: "food_nightlife", label: "Good restaurants or nightlife within reach", icon: Utensils },

@@ -1,6 +1,7 @@
 import type { SurveyAnswers } from "@/types/survey";
 import type { TripInterpretation } from "@/types/interpretation";
 import { generateMockInterpretation } from "@/lib/mockInterpretation";
+import { normalizeTripInterpretation } from "@/lib/normalizeInterpretation";
 
 export type TripInterpretationSource = "ai" | "fallback";
 
@@ -22,10 +23,19 @@ export async function fetchTripInterpretation(
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ surveyAnswers }),
     });
-    const data = (await res.json()) as {
-      interpretation?: TripInterpretation;
-      error?: string;
-    };
+    const rawBody = await res.text();
+    let data: { interpretation?: TripInterpretation; error?: string } = {};
+    if (rawBody.trim()) {
+      try {
+        data = JSON.parse(rawBody) as typeof data;
+      } catch {
+        console.warn(
+          "interpret-trip response was not JSON:",
+          res.status,
+          rawBody.slice(0, 240)
+        );
+      }
+    }
     if (res.ok && data.interpretation) {
       return { interpretation: data.interpretation, source: "ai" };
     }
@@ -33,8 +43,16 @@ export async function fetchTripInterpretation(
   } catch (e) {
     console.error("interpret-trip fetch failed:", e);
   }
-  return {
-    interpretation: generateMockInterpretation(surveyAnswers),
-    source: "fallback",
-  };
+  try {
+    const raw = generateMockInterpretation(surveyAnswers);
+    return {
+      interpretation: normalizeTripInterpretation(
+        raw as Partial<TripInterpretation> & Record<string, unknown>
+      ),
+      source: "fallback",
+    };
+  } catch (e) {
+    console.error("fallback interpretation failed:", e);
+    throw e instanceof Error ? e : new Error("Could not build trip preview");
+  }
 }

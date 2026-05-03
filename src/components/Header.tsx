@@ -72,10 +72,20 @@ export function Header() {
   return (
     <header className="sticky top-0 z-[100] bg-white/40 backdrop-blur-xl border-b border-white/20 py-4 px-6">
       <div className="flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <Image src={balloonImage} alt="LumiTrip" width={32} height={32} />
-          <span className="text-lg font-serif font-bold text-primary">WanderMoodz</span>
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link href="/" className="flex items-center gap-2">
+            <Image src={balloonImage} alt="LumiTrip" width={32} height={32} />
+            <span className="text-lg font-serif font-bold text-primary">
+              WanderMoodz
+            </span>
+          </Link>
+          <Link
+            href="/about"
+            className="text-sm font-medium text-stone-600 hover:text-primary transition-colors hidden sm:inline"
+          >
+            About
+          </Link>
+        </div>
 
         <div className="flex items-center gap-3">
           {loading ? (

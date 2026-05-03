@@ -141,5 +141,8 @@ export const themes: Record<ThemeKey, Theme> = {
 };
 
 export function getTheme(key: ThemeKey): Theme {
-  return themes[key];
+  if (key in themes) {
+    return themes[key];
+  }
+  return themes.coastal_calm;
 }

@@ -18,18 +18,19 @@ export const themeKeySchema = z.enum(THEME_KEYS);
  * Minimal shape we require from the model. Everything else on cards is optional;
  * `normalizeTripInterpretation` + `normalizeComparisonCard` fill gaps for the UI.
  */
+/** Optional card fields we validate when present; other keys pass through. */
+export const aiComparisonCardSchema = z
+  .object({
+    destinationName: z.string().min(1),
+    estimatedSpendBand: z.string().min(1).optional(),
+    primaryAirportLabel: z.string().min(1).optional(),
+    suggestedActivities: z.array(z.string().min(1)).optional(),
+  })
+  .passthrough();
+
 export const aiTripInterpretationResponseSchema = z.object({
   selectedTheme: themeKeySchema,
-  comparisonCards: z
-    .array(
-      z
-        .object({
-          destinationName: z.string().min(1),
-        })
-        .passthrough()
-    )
-    .min(1)
-    .max(5),
+  comparisonCards: z.array(aiComparisonCardSchema).min(1).max(5),
   tradeoffWarnings: z.array(z.string()).optional().default([]),
   destinationPreferences: z.array(z.string()).optional().default([]),
   activityPreferences: z.array(z.string()).optional().default([]),

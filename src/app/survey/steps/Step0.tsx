@@ -10,18 +10,12 @@ import balloonImage from "@/lib/assets/balloon.png";
 import styles from "@/styles/animations.module.scss";
 
 type Step0Props = {
-  hasDestinations?: boolean;
   destinationList?: string[];
   onUpdate: (hasDestinations: boolean, destinations: string[]) => void;
   onNext: () => void;
 };
 
-export function Step0({
-  hasDestinations,
-  destinationList,
-  onUpdate,
-  onNext,
-}: Step0Props) {
+export function Step0({ destinationList, onUpdate, onNext }: Step0Props) {
   const [inputs, setInputs] = useState<string[]>(
     destinationList && destinationList.length > 0 ? destinationList : [""]
   );
@@ -56,7 +50,6 @@ export function Step0({
 
   const handleContinue = () => {
     const filledDestinations = inputs.filter(input => input.trim().length > 0);
-    console.log('Step0 handleContinue - filledDestinations:', filledDestinations);
     if (filledDestinations.length > 0) {
       onUpdate(true, filledDestinations);
       onNext();

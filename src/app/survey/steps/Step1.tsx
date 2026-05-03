@@ -1,16 +1,34 @@
 import { Card } from "@/components/ui/Card";
 import { SurveyStepHeader } from "@/components/SurveyStepHeader";
 import { SurveyFooter } from "@/components/SurveyFooter";
-import { Sparkles, Heart, Eye, Utensils, Mountain, HeartHandshake, Shuffle } from "lucide-react";
+import {
+  Sparkles,
+  Heart,
+  Eye,
+  Utensils,
+  Mountain,
+  HeartHandshake,
+  Shuffle,
+} from "lucide-react";
+import { TRIP_LENGTH_OPTIONS, type TripLengthNights } from "@/types/survey";
 
 type Step1Props = {
   selected?: string;
+  tripLengthNights?: TripLengthNights;
   onSelect: (value: string) => void;
+  onTripLengthChange: (value: TripLengthNights) => void;
   onNext: () => void;
   onBack?: () => void;
 };
 
-export function Step1({ selected, onSelect, onNext, onBack }: Step1Props) {
+export function Step1({
+  selected,
+  tripLengthNights,
+  onSelect,
+  onTripLengthChange,
+  onNext,
+  onBack,
+}: Step1Props) {
   const options = [
     {
       value: "reset",
@@ -59,6 +77,31 @@ export function Step1({ selected, onSelect, onNext, onBack }: Step1Props) {
         // description="There are no wrong answers. Pick what feels true right now."
       />
 
+      <div className="max-w-xl mx-auto mb-8 text-center">
+        <p className="text-sm font-medium text-primary uppercase tracking-wide mb-2">
+          Trip length
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {TRIP_LENGTH_OPTIONS.map((opt) => {
+            const isLen = tripLengthNights === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => onTripLengthChange(opt.value)}
+                className={`text-xs px-3 py-2 rounded-full border transition-colors ${
+                  isLen
+                    ? "border-amber-500 bg-amber-50 text-amber-950 font-medium"
+                    : "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
+                }`}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       <div className="grid gap-3 mb-8">
         {options.map((option) => {
           const Icon = option.icon;
@@ -70,12 +113,18 @@ export function Step1({ selected, onSelect, onNext, onBack }: Step1Props) {
               onClick={() => onSelect(option.value)}
             >
               <div className="flex items-start gap-3">
-                <Icon className={`w-5 h-5 flex-shrink-0 mt-0.5 ${isSelected ? 'text-white' : 'text-primary'}`} />
+                <Icon
+                  className={`w-5 h-5 flex-shrink-0 mt-0.5 ${isSelected ? "text-white" : "text-primary"}`}
+                />
                 <div className="text-left">
-                  <p className={`text-base font-medium ${isSelected ? 'text-white' : 'text-stone-900'}`}>
+                  <p
+                    className={`text-base font-medium ${isSelected ? "text-white" : "text-stone-900"}`}
+                  >
                     {option.label}
                   </p>
-                  <p className={`text-sm mt-0.5 ${isSelected ? 'text-white/80' : 'text-stone-600'}`}>
+                  <p
+                    className={`text-sm mt-0.5 ${isSelected ? "text-white/80" : "text-stone-600"}`}
+                  >
                     {option.sublabel}
                   </p>
                 </div>

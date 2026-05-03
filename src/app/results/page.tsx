@@ -10,8 +10,9 @@ import { getTheme } from "@/lib/themes";
 import { AuthGate } from "@/components/AuthGate";
 import { WandertypeBanner } from "@/components/results/WandertypeBanner";
 import { DestinationCard } from "@/components/results/DestinationCard";
-import { AccordionSection } from "@/components/results/AccordionSection";
+import { ResultsInsightsAccordions } from "@/components/results/ResultsInsightsAccordions";
 import { TwinklingStars } from "@/components/results/TwinklingStars";
+import { comparisonGridClassName } from "@/lib/resultsLayout";
 import type { TripInterpretation } from "@/types/interpretation";
 import { fetchTripInterpretation } from "@/lib/fetchTripInterpretation";
 import type { TripInterpretationSource } from "@/lib/fetchTripInterpretation";
@@ -22,41 +23,53 @@ export default function ResultsPage() {
   const [interpretationSource, setInterpretationSource] =
     useState<TripInterpretationSource | null>(null);
   const [backgroundImage, setBackgroundImage] = useState<string>("/bg.png");
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
   const sessionSavedRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
-      const answers = loadSurveyAnswers();
-      if (!answers) {
-        router.replace("/");
-        return;
+      setLoadError(null);
+      try {
+        const answers = loadSurveyAnswers();
+        if (!answers) {
+          router.replace("/");
+          return;
+        }
+
+        const { interpretation: next, source } =
+          await fetchTripInterpretation(answers);
+        if (cancelled) return;
+
+        setInterpretation(next);
+        setInterpretationSource(source);
+
+        const theme = getTheme(next.selectedTheme);
+        const img = new Image();
+        img.onload = () => {
+          if (!cancelled) setBackgroundImage(theme.backgroundImage);
+        };
+        img.onerror = () => {
+          if (!cancelled) setBackgroundImage("/bg.png");
+        };
+        img.src = theme.backgroundImage;
+      } catch (e) {
+        console.error("Results load failed:", e);
+        if (!cancelled) {
+          setLoadError(
+            e instanceof Error ? e.message : "Could not load your comparison."
+          );
+        }
       }
-
-      const { interpretation: next, source } =
-        await fetchTripInterpretation(answers);
-      if (cancelled) return;
-
-      setInterpretation(next);
-      setInterpretationSource(source);
-
-      const theme = getTheme(next.selectedTheme);
-      const img = new Image();
-      img.onload = () => {
-        if (!cancelled) setBackgroundImage(theme.backgroundImage);
-      };
-      img.onerror = () => {
-        if (!cancelled) setBackgroundImage("/bg.png");
-      };
-      img.src = theme.backgroundImage;
     }
 
     void load();
     return () => {
       cancelled = true;
     };
-  }, [router]);
+  }, [router, retryKey]);
 
   useEffect(() => {
     if (!interpretation) return;
@@ -87,10 +100,32 @@ export default function ResultsPage() {
   if (!interpretation) {
     return (
       <AuthGate>
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-900 via-indigo-800 to-blue-900">
-          <div className="text-center">
-            <div className="animate-spin w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full mx-auto mb-4" />
-            <p className="text-stone-200">Generating your personalized comparison...</p>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-900 via-indigo-800 to-blue-900 px-6">
+          <div className="text-center max-w-md">
+            {loadError ? (
+              <>
+                <p className="text-red-200 text-sm mb-4 leading-relaxed">{loadError}</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoadError(null);
+                    setRetryKey((k) => k + 1);
+                  }}
+                  className="text-sm px-4 py-2 rounded-lg bg-amber-400 text-stone-900 font-medium hover:bg-amber-300"
+                >
+                  Try again
+                </button>
+                <p className="text-stone-400 text-xs mt-4">
+                  If this keeps happening, open the browser console and check the
+                  Network tab for <code className="text-stone-300">/api/interpret-trip</code>.
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="animate-spin w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full mx-auto mb-4" />
+                <p className="text-stone-200">Generating your personalized comparison...</p>
+              </>
+            )}
           </div>
         </div>
       </AuthGate>
@@ -105,16 +140,17 @@ export default function ResultsPage() {
       <>
         {/* Background image with parallax */}
         <div
-          className="fixed inset-0 z-0 bg-parallax"
+          className="fixed inset-0 z-0 bg-parallax pointer-events-none"
           style={{
             backgroundImage: `url(${backgroundImage})`,
             backgroundPosition: 'center',
             backgroundAttachment: 'scroll',
             filter: 'opacity(0.5) saturate(0.5) brightness(1.15)',
           }}
+          aria-hidden
         />
-        
-        <div className="min-h-screen text-stone-900 relative">
+
+        <div className="min-h-screen text-stone-900 relative z-10">
           <TwinklingStars />
           <div className="relative z-10 max-w-5xl mx-auto px-6 py-12">
           {/* Wandertype Banner */}
@@ -122,9 +158,11 @@ export default function ResultsPage() {
 
           {interpretationSource === "fallback" && (
             <p className="mb-5 text-xs text-amber-900 bg-amber-50/95 border border-amber-200 rounded-lg px-3 py-2.5 leading-relaxed">
-              We could not run the full AI interpreter (missing API key or a
-              temporary error). Showing a quick preview built from your answers
-              instead.
+              The AI interpreter did not return a result (often missing{" "}
+              <code className="text-[10px] bg-amber-100/80 px-1 rounded">ANTHROPIC_API_KEY</code>{" "}
+              on the server, a model error, or validation failure). You are
+              seeing an offline preview: airports and activities use built-in
+              city hints where we recognize the place, not live model output.
             </p>
           )}
 
@@ -134,156 +172,17 @@ export default function ResultsPage() {
           </div>
 
           {/* Destination Cards Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-12">
+          <div
+            className={`${comparisonGridClassName(
+              interpretation.comparisonCards.length
+            )} mb-12`}
+          >
             {interpretation.comparisonCards.map((card, index) => (
               <DestinationCard key={card.destinationName} card={card} index={index} />
             ))}
           </div>
 
-          {/* Accordions */}
-          <div className="space-y-4">
-            <AccordionSection
-              title="🗺️ Adventure Options by Base"
-              defaultOpen={false}
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div>
-                  <h4 className="text-sm font-medium text-stone-900 mb-3 font-serif">🌋 La Fortuna / Arenal</h4>
-                  <ul className="space-y-2 text-xs">
-                    <li className="pb-2 border-b border-white/5">
-                      <a href="#"                     className="text-primary hover:text-primary-dark transition-colors">
-                      <span className="text-primary font-medium">Arenal Volcano ★</span>
-                    </a>
-                    <span className="text-stone-600"> — 10–25 min</span>
-                    </li>
-                    <li className="pb-2 border-b border-white/5">
-                      <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                        <span className="text-amber-400 font-medium">La Fortuna Waterfall ★</span>
-                      </a>
-                      <span className="text-blue-200"> — 10–20 min</span>
-                    </li>
-                    <li className="pb-2 border-b border-white/5">
-                      <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                        <span className="text-amber-400 font-medium">Hot Springs ★</span>
-                      </a>
-                      <span className="text-blue-200"> — 10–25 min</span>
-                    </li>
-                    <li className="pb-2 border-b border-white/5">
-                      <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                        Ziplining
-                      </a>
-                      <span className="text-blue-200"> — 10–30 min</span>
-                    </li>
-                    <li>
-                      <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                        Whitewater Rafting
-                      </a>
-                      <span className="text-blue-200"> — 30–90 min</span>
-                    </li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="text-sm font-medium text-amber-400 mb-3">🌊 Playa Hermosa / Guanacaste</h4>
-                  <ul className="space-y-2 text-xs">
-                    <li className="pb-2 border-b border-white/5">
-                      <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                        Playa Hermosa beach
-                      </a>
-                      <span className="text-blue-200"> — 0–10 min</span>
-                    </li>
-                    <li className="pb-2 border-b border-white/5">
-                      <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                        Boat / snorkeling tours
-                      </a>
-                      <span className="text-blue-200"> — 15–45 min</span>
-                    </li>
-                    <li className="pb-2 border-b border-white/5">
-                      <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                        <span className="text-amber-400 font-medium">Rincón de la Vieja ★</span>
-                      </a>
-                      <span className="text-blue-200"> — 1h 30m–2h</span>
-                    </li>
-                    <li className="pb-2 border-b border-white/5">
-                      <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                        Catamaran sunset cruise
-                      </a>
-                      <span className="text-blue-200"> — 15–45 min</span>
-                    </li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="text-sm font-medium text-amber-400 mb-3">🌿 Savegre / Dominical / Uvita</h4>
-                  <ul className="space-y-2 text-xs">
-                    <li className="pb-2 border-b border-white/5">
-                      <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                        <span className="text-amber-400 font-medium">Nauyaca Waterfalls ★</span>
-                      </a>
-                      <span className="text-blue-200"> — 30–60 min</span>
-                    </li>
-                    <li className="pb-2 border-b border-white/5">
-                      <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                        <span className="text-amber-400 font-medium">Manuel Antonio Park ★</span>
-                      </a>
-                      <span className="text-blue-200"> — 60–90 min</span>
-                    </li>
-                    <li className="pb-2 border-b border-white/5">
-                      <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                        Whale / boat tours
-                      </a>
-                      <span className="text-blue-200"> — 45–75 min</span>
-                    </li>
-                    <li>
-                      <a href="#" className="text-blue-300 hover:text-amber-400 transition-colors">
-                        Beach hopping
-                      </a>
-                      <span className="text-blue-200"> — 20–90 min</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </AccordionSection>
-
-            <AccordionSection
-              title="💡 Things You Might Not Be Thinking About"
-              defaultOpen={false}
-            >
-              <div className="space-y-3">
-                {interpretation.tradeoffWarnings.map((warning, index) => (
-                  <div
-                    key={index}
-                    className="p-3 bg-stone-50/95 border border-stone-200 rounded-lg text-xs text-stone-700 leading-relaxed"
-                  >
-                    {warning}
-                  </div>
-                ))}
-              </div>
-            </AccordionSection>
-
-            <AccordionSection
-              title="⭐ Bottom Line"
-              defaultOpen={false}
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5">
-                {interpretation.comparisonCards.map((card, index) => (
-                  <div
-                    key={card.destinationName}
-                  className={`p-5 bg-stone-50/95 border rounded-lg border-l-4 ${
-                    index === 0 ? 'border-l-orange-500' :
-                    index === 1 ? 'border-l-cyan-500' :
-                    'border-l-green-500'
-                  } border-stone-200`}
-                  >
-                  <h4 className="text-sm font-medium text-stone-900 mb-2 font-serif">
-                    {card.destinationName.split('/')[0].trim()}
-                  </h4>
-                  <p className="text-xs text-stone-700 italic">{card.verdictGood}</p>
-                  </div>
-                ))}
-              </div>
-            </AccordionSection>
-          </div>
+          <ResultsInsightsAccordions interpretation={interpretation} />
 
           {/* Footer */}
           <p className="text-center mt-12 text-xs text-stone-500 italic tracking-wide">

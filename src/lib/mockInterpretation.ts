@@ -1,16 +1,36 @@
 import type { TripInterpretation, DestinationComparisonCard } from "@/types/interpretation";
 import type { SurveyAnswers } from "@/types/survey";
 import { getInterpretationCopyForWandertype } from "@/lib/wanderType";
+import {
+  heuristicActivitiesForDestination,
+  heuristicBestFor,
+  heuristicDrawbacks,
+  heuristicPrimaryAirportLabel,
+  heuristicSpendBand,
+  heuristicSummary,
+  heuristicVerdictGood,
+  heuristicVerdictWatch,
+} from "@/lib/destinationHeuristics";
+
+function userPickedDestinationList(answers: SurveyAnswers): string[] | null {
+  const fromList =
+    answers.destinationList?.map((s) => String(s).trim()).filter(Boolean) ?? [];
+  const fromDest =
+    answers.destinations?.map((s) => String(s).trim()).filter(Boolean) ?? [];
+  const merged = fromList.length > 0 ? fromList : fromDest;
+  if (merged.length === 0) return null;
+  if (answers.chooseForMe === true) return null;
+  return merged;
+}
 
 export function generateMockInterpretation(
   answers: SurveyAnswers
 ): TripInterpretation {
   const selectedTheme = selectThemeFromAnswers(answers);
+  const picked = userPickedDestinationList(answers);
   const comparisonCards =
-    answers.hasDestinations &&
-    answers.destinationList &&
-    answers.destinationList.length > 0
-      ? generateCardsForUserDestinations(answers.destinationList)
+    picked && picked.length > 0
+      ? generateCardsForUserDestinations(picked, answers)
       : getDefaultDestinations();
 
   return {
@@ -22,31 +42,84 @@ export function generateMockInterpretation(
     destinationPreferences: ["Nature-focused", "Accessible beauty", "Good food scene"],
     activityPreferences: answers.activities || [],
     avoidances: ["Overpacked schedules", "Too many hotel changes"],
-    tradeoffWarnings: [
-      "Popular spots may be crowded in peak season",
-      "Some remote areas require longer drives",
-    ],
+    tradeoffWarnings: buildMockTradeoffWarnings(comparisonCards, answers),
     comparisonCards,
   };
 }
 
-function generateCardsForUserDestinations(destinations: string[]): DestinationComparisonCard[] {
+function buildMockTradeoffWarnings(
+  cards: DestinationComparisonCard[],
+  answers: SurveyAnswers
+): string[] {
+  const names = cards.map((c) => c.destinationName.trim()).filter(Boolean);
+  const out: string[] = [];
+
+  if (names.length >= 2) {
+    const [a, b] = names;
+    out.push(
+      `Splitting nights between ${a} and ${b} usually burns at least a half-day to a full day in transfers — plan roughly 3–8 hours door-to-door depending on mode, traffic, and whether you are hauling luggage.`
+    );
+  } else if (names.length === 1) {
+    out.push(
+      `With ${names[0]} as your main base, double-check how far your must-see stops sit from where you sleep — short hops on a map often become 2–4 hour round trips once parking, ferries, or mountain roads are included.`
+    );
+  }
+
+  if (names.length >= 3) {
+    out.push(
+      `With ${names.length} different bases on the board, watch for backtracking — the most scenic route is not always the fastest between ${names[0]}, ${names[1]}, and ${names[2]}.`
+    );
+  }
+
+  const legacyList =
+    answers.destinationList?.length && answers.destinationList.length > 0
+      ? answers.destinationList
+      : answers.destinations;
+  if (legacyList && legacyList.length >= 2) {
+    const x = legacyList[0];
+    const y = legacyList[1];
+    out.push(
+      `If you are weighing ${x} vs ${y}, sanity-check what a realistic day looks like from each address (not just city center pins) — last-mile time is where trips quietly go off the rails.`
+    );
+  }
+
+  if (answers.openText?.trim()) {
+    const snippet = answers.openText.trim().slice(0, 140);
+    out.push(
+      `You noted: "${snippet}${answers.openText.trim().length > 140 ? "…" : ""}" — map that explicitly onto arrival windows, luggage, and how tired the group will be on transfer days.`
+    );
+  }
+
+  for (const c of cards) {
+    for (const d of c.possibleDrawbacks) {
+      if (out.length >= 6) break;
+      if (!out.includes(d)) out.push(`${c.destinationName}: ${d}`);
+    }
+    if (out.length >= 6) break;
+  }
+
+  if (out.length < 2) {
+    out.push(
+      "Peak weeks concentrate crowds around the top-rated few blocks in each area — book dinner and any timed entry early, especially for weekend arrivals."
+    );
+  }
+
+  return out.slice(0, 6);
+}
+
+function generateCardsForUserDestinations(
+  destinations: string[],
+  answers: SurveyAnswers
+): DestinationComparisonCard[] {
   return destinations.map((dest, index) => ({
     destinationName: dest,
-    summary: `A destination that matches your travel style with unique experiences and comfortable access.`,
+    summary: heuristicSummary(dest, index),
     matchScore: 85 - index * 5,
     matchLabel: index === 0 ? "Best Match" : index === 1 ? "Strong option" : "Worth considering",
-    bestFor: [
-      "Travelers seeking authentic experiences",
-      "Those who value local culture",
-      "Groups with mixed interests",
-    ],
-    possibleDrawbacks: [
-      "Research local customs before visiting",
-      "Peak season may affect availability",
-    ],
-    verdictGood: "You want a place that balances discovery with comfort.",
-    verdictWatch: "Check seasonal weather and local events before locking dates.",
+    bestFor: heuristicBestFor(dest),
+    possibleDrawbacks: heuristicDrawbacks(dest),
+    verdictGood: heuristicVerdictGood(dest),
+    verdictWatch: heuristicVerdictWatch(dest),
     scores: {
       relaxation: 70 + Math.floor(Math.random() * 20),
       adventure: 60 + Math.floor(Math.random() * 25),
@@ -59,12 +132,13 @@ function generateCardsForUserDestinations(destinations: string[]): DestinationCo
       beach: 40 + Math.floor(Math.random() * 40),
       eightNightValue: 65 + Math.floor(Math.random() * 25),
     },
-    suggestedActivities: [
-      "Explore local markets",
-      "Try regional cuisine",
-      "Visit cultural sites",
-      "Connect with locals",
-    ],
+    estimatedSpendBand: heuristicSpendBand(
+      dest,
+      index,
+      answers.tripLengthNights
+    ),
+    primaryAirportLabel: heuristicPrimaryAirportLabel(dest),
+    suggestedActivities: heuristicActivitiesForDestination(dest),
     searchLinks: {
       googleMaps: `https://maps.google.com/?q=${encodeURIComponent(dest)}`,
       airbnbSearch: `https://www.airbnb.com/s/${encodeURIComponent(dest)}`,
@@ -104,11 +178,16 @@ function getDefaultDestinations(): DestinationComparisonCard[] {
           beach: 75,
           eightNightValue: 82,
         },
+        estimatedSpendBand:
+          "Mid week in CR: about $2.5k–4.2k per person (lodging + meals + local transport); flights extra.",
+        primaryAirportLabel: "Juan Santamaría (SJO) — most international arrivals",
         suggestedActivities: [
-          "Manuel Antonio National Park",
-          "Beach time",
-          "Sloth watching",
-          "Sunset catamaran tour",
+          "Manuel Antonio National Park wildlife loop",
+          "Espadilla Beach morning",
+          "Catamaran + snorkeling (Quepos coast)",
+          "Mangrove kayak near Damas Island",
+          "Sunset viewpoint above the park ridge",
+          "Local sodas + ceviche crawl in Quepos",
         ],
         searchLinks: {
           googleMaps: "https://maps.google.com/?q=Manuel+Antonio+Costa+Rica",
@@ -145,11 +224,16 @@ function getDefaultDestinations(): DestinationComparisonCard[] {
           beach: 85,
           eightNightValue: 78,
         },
+        estimatedSpendBand:
+          "Strong euro value: about $2k–3.5k per person for a week (lodging + meals + local transport); flights extra.",
+        primaryAirportLabel: "Faro (FAO) — closest major airport to the coast",
         suggestedActivities: [
-          "Beach hopping",
-          "Seafood dinners",
-          "Benagil Cave boat tour",
-          "Lagos old town",
+          "Benagil sea cave boat tour",
+          "Seven Hanging Valleys cliff walk",
+          "Lagos old town + Ponta da Piedade viewpoints",
+          "Sagres fortress + surf beaches",
+          "Olhão market + grilled fish lunch",
+          "East Algarve salt pans & flamingo flats",
         ],
         searchLinks: {
           googleMaps: "https://maps.google.com/?q=Algarve+Portugal",
@@ -186,11 +270,16 @@ function getDefaultDestinations(): DestinationComparisonCard[] {
           beach: 70,
           eightNightValue: 72,
         },
+        estimatedSpendBand:
+          "Wide range: about $1.2k–3k per person for a week depending on villa tier; flights extra.",
+        primaryAirportLabel: "Ngurah Rai (DPS) — Denpasar / Bali main airport",
         suggestedActivities: [
-          "Rice terrace walk",
-          "Temple visits",
-          "Surf lessons",
-          "Spa day",
+          "Campuhan Ridge sunrise walk (Ubud)",
+          "Tegalalang rice terraces + swing viewpoints",
+          "Sacred Monkey Forest (Ubud)",
+          "Balinese cooking class",
+          "Canggu beginner surf session",
+          "Spa + sound bath afternoon",
         ],
         searchLinks: {
           googleMaps: "https://maps.google.com/?q=Ubud+Bali",

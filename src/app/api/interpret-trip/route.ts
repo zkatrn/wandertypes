@@ -7,10 +7,16 @@ import {
   extractJsonObjectFromAssistantText,
 } from "@/lib/tripInterpretationAiSchema";
 import { buildInterpretTripUserPrompt } from "@/lib/interpretTripPrompt";
+import { enrichAllCardsAirportDistances } from "@/lib/googleMapsAirportEnrichment";
+import { extractTextFromAnthropicMessageContent } from "@/lib/anthropicMessageText";
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
+
+/** `claude-3-5-sonnet-20241022` and older IDs return 404; override via ANTHROPIC_MODEL if needed. */
+const ANTHROPIC_MESSAGES_MODEL =
+  process.env.ANTHROPIC_MODEL?.trim() || "claude-sonnet-4-6";
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,17 +40,14 @@ export async function POST(request: NextRequest) {
     const userPrompt = buildInterpretTripUserPrompt(surveyAnswers);
 
     const message = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-20241022",
+      model: ANTHROPIC_MESSAGES_MODEL,
       max_tokens: 8192,
       messages: [{ role: "user", content: userPrompt }],
     });
 
-    const content = message.content[0];
-    if (content.type !== "text") {
-      throw new Error("Unexpected response format from Anthropic");
-    }
+    const assistantText = extractTextFromAnthropicMessageContent(message.content);
 
-    const jsonText = extractJsonObjectFromAssistantText(content.text);
+    const jsonText = extractJsonObjectFromAssistantText(assistantText);
     let parsedJson: unknown;
     try {
       parsedJson = JSON.parse(jsonText);
@@ -68,9 +71,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const interpretation = normalizeTripInterpretation({
+    let interpretation = normalizeTripInterpretation({
       ...(validated.data as unknown as Partial<TripInterpretation>),
     });
+
+    const googleMapsKey = process.env.GOOGLE_MAPS_API_KEY;
+    if (googleMapsKey) {
+      try {
+        const enriched = await enrichAllCardsAirportDistances(
+          interpretation.comparisonCards,
+          googleMapsKey
+        );
+        interpretation = { ...interpretation, comparisonCards: enriched };
+      } catch (geoErr) {
+        console.error("Google Maps airport enrichment skipped:", geoErr);
+      }
+    }
 
     return NextResponse.json({ interpretation });
   } catch (error: unknown) {

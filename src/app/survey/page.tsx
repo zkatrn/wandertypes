@@ -102,7 +102,9 @@ export default function SurveyPage() {
         {step === 1 && (
           <Step1
             selected={answers.tripMood}
+            tripLengthNights={answers.tripLengthNights}
             onSelect={(value) => updateAnswer("tripMood", value as any)}
+            onTripLengthChange={(value) => updateAnswer("tripLengthNights", value)}
             onNext={goNext}
             onBack={goBack}
           />

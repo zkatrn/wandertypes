@@ -20,6 +20,8 @@ export type DestinationScore = {
   eightNightValue: number;
 };
 
+export type AirportDistanceSource = "google_distance_matrix" | "none";
+
 export type DestinationComparisonCard = {
   destinationName: string;
   summary: string;
@@ -31,6 +33,15 @@ export type DestinationComparisonCard = {
   verdictWatch: string; // "Watch out for…" text
   scores: DestinationScore;
   suggestedActivities: string[];
+  /** Qualitative band only — not live booking totals. */
+  estimatedSpendBand?: string;
+  /** Airport the model expects most guests to use (name + IATA when known). */
+  primaryAirportLabel?: string;
+  /** Driving distance from primary airport to a central geocode of the base (Google). */
+  distanceFromPrimaryAirportKm?: number;
+  /** Typical driving time airport → center per Google Distance Matrix (traffic varies). */
+  distanceFromPrimaryAirportDriveMinutes?: number;
+  airportDistanceSource?: AirportDistanceSource;
   searchLinks: {
     googleMaps?: string;
     airbnbSearch?: string;

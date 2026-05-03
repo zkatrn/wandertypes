@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { Theme } from "@/lib/themes";
-import type { SurveyAnswers } from "@/types/survey";
+import { tripLengthDisplayLabel, type SurveyAnswers } from "@/types/survey";
 
 interface WandertypeBannerProps {
   theme: Theme;
@@ -22,6 +22,11 @@ export function WandertypeBanner({ theme, surveyAnswers }: WandertypeBannerProps
       );
     } else if (surveyAnswers?.chooseForMe) {
       pills.push("Choose for me");
+    }
+
+    const tripLen = tripLengthDisplayLabel(surveyAnswers?.tripLengthNights);
+    if (tripLen) {
+      pills.push(tripLen);
     }
 
     if (surveyAnswers?.groupType) {
