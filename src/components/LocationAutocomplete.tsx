@@ -79,10 +79,9 @@ function PlainDestinationField({
   placeholder,
   className,
   onEnter,
-  showFallbackHint,
-}: LocationAutocompleteProps & { showFallbackHint: boolean }) {
+}: LocationAutocompleteProps) {
   return (
-    <div className={`flex flex-col gap-1 min-w-0 ${className}`}>
+    <div className={`min-w-0 ${className}`}>
       <input
         type="text"
         value={value}
@@ -103,11 +102,6 @@ function PlainDestinationField({
         className="w-full min-h-[2.75rem] border-0 bg-transparent text-stone-900 outline-none ring-0 placeholder:text-stone-400 focus:ring-0"
         autoComplete="off"
       />
-      {showFallbackHint ? (
-        <p className="text-left text-xs text-stone-500 px-0.5">
-          Map suggestions are unavailable — you can still enter any destination.
-        </p>
-      ) : null}
     </div>
   );
 }
@@ -283,13 +277,28 @@ export function LocationAutocomplete({
         }
       };
 
+      const handleGmpError = () => {
+        if (cancelled) {
+          return;
+        }
+        setUseNativeFallback(true);
+      };
+
       widget.addEventListener("gmp-select", handleGmpSelect);
+      widget.addEventListener("gmp-error", handleGmpError);
+      /** Older Maps builds used alternate names before `gmp-error`. */
+      widget.addEventListener("gmp-request-error" as keyof HTMLElementEventMap, handleGmpError);
       widget.addEventListener("input", syncTypingFromShadow, true);
       widget.addEventListener("keydown", handleKeyDown, true);
       widget.addEventListener("focusout", handleBlur);
 
       const detach = () => {
         widget.removeEventListener("gmp-select", handleGmpSelect);
+        widget.removeEventListener("gmp-error", handleGmpError);
+        widget.removeEventListener(
+          "gmp-request-error" as keyof HTMLElementEventMap,
+          handleGmpError
+        );
         widget.removeEventListener("input", syncTypingFromShadow, true);
         widget.removeEventListener("keydown", handleKeyDown, true);
         widget.removeEventListener("focusout", handleBlur);
@@ -350,25 +359,15 @@ export function LocationAutocomplete({
         placeholder={placeholder}
         className={className}
         onEnter={onEnter}
-        showFallbackHint={FEATURE_FLAGS.GOOGLE_PLACES_AUTOCOMPLETE}
       />
     );
   }
 
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-1">
-      <div
-        ref={placesHostRef}
-        className={`places-autocomplete-root ${className}`}
-        style={{ minWidth: 0 }}
-      />
-      <button
-        type="button"
-        className="self-start text-left text-xs font-medium text-stone-500 underline decoration-stone-300 underline-offset-2 hover:text-stone-700"
-        onClick={() => setUseNativeFallback(true)}
-      >
-        Prefer plain text (no map suggestions)?
-      </button>
-    </div>
+    <div
+      ref={placesHostRef}
+      className={`places-autocomplete-root min-w-0 flex-1 ${className}`}
+      style={{ minWidth: 0 }}
+    />
   );
 }
