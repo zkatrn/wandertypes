@@ -1,0 +1,60 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cloudGradient" x1="82" y1="348" x2="430" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF7ED"/>
+      <stop offset="1" stop-color="#E0F2FE"/>
+    </linearGradient>
+    <linearGradient id="balloonGradient" x1="174" y1="72" x2="338" y2="274" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FDBA74"/>
+      <stop offset="0.55" stop-color="#FB7185"/>
+      <stop offset="1" stop-color="#C084FC"/>
+    </linearGradient>
+    <linearGradient id="basketGradient" x1="220" y1="320" x2="292" y2="382" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FCD34D"/>
+      <stop offset="1" stop-color="#D97706"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Transparent background -->
+
+  <!-- Soft gradient clouds -->
+  <path d="M82 401C82 374 104 352 132 352C139 352 146 353 153 356C166 329 194 311 226 311C263 311 295 335 306 368C313 366 321 365 329 365C361 365 387 389 390 420C411 423 430 441 430 464H102C91 451 82 427 82 401Z" fill="url(#cloudGradient)" opacity="0.95"/>
+  <path d="M41 432C41 410 59 392 82 392C88 392 94 393 99 396C110 374 133 360 159 360C189 360 214 379 223 406C230 404 237 403 244 403C271 403 293 423 296 449C314 452 329 467 331 486H59C49 475 41 453 41 432Z" fill="url(#cloudGradient)" opacity="0.68"/>
+
+  <!-- Hot air balloon, slightly tilted for movement -->
+  <g transform="rotate(-4 256 248)">
+    <!-- Balloon silhouette -->
+    <path d="M256 56C201 56 156 105 156 166C156 221 196 264 232 292C242 300 250 308 256 318C262 308 270 300 280 292C316 264 356 221 356 166C356 105 311 56 256 56Z" fill="url(#balloonGradient)"/>
+
+    <!-- Balloon panels -->
+    <path d="M256 60C231 96 220 139 221 184C222 232 236 274 256 318" stroke="white" stroke-opacity="0.65" stroke-width="8" stroke-linecap="round"/>
+    <path d="M256 60C281 96 292 139 291 184C290 232 276 274 256 318" stroke="white" stroke-opacity="0.65" stroke-width="8" stroke-linecap="round"/>
+    <path d="M166 162C190 175 221 182 256 182C291 182 322 175 346 162" stroke="white" stroke-opacity="0.45" stroke-width="8" stroke-linecap="round"/>
+    <path d="M185 232C205 244 231 250 256 250C281 250 307 244 327 232" stroke="white" stroke-opacity="0.42" stroke-width="7" stroke-linecap="round"/>
+
+    <!-- Neck -->
+    <path d="M228 293H284L276 329H236L228 293Z" fill="#F97316" opacity="0.9"/>
+
+    <!-- Ropes, intentionally uneven -->
+    <path d="M236 329C229 347 225 363 222 381" stroke="#8B5E34" stroke-width="5" stroke-linecap="round"/>
+    <path d="M276 329C282 348 287 364 291 381" stroke="#8B5E34" stroke-width="5" stroke-linecap="round"/>
+    <path d="M248 330C247 348 247 364 246 381" stroke="#8B5E34" stroke-width="4" stroke-linecap="round" opacity="0.75"/>
+    <path d="M264 330C266 348 267 364 268 381" stroke="#8B5E34" stroke-width="4" stroke-linecap="round" opacity="0.75"/>
+
+    <!-- Basket -->
+    <path d="M216 374H296L286 424H226L216 374Z" fill="url(#basketGradient)"/>
+    <path d="M222 386H290" stroke="#92400E" stroke-width="5" stroke-linecap="round" opacity="0.65"/>
+    <path d="M226 404H286" stroke="#92400E" stroke-width="5" stroke-linecap="round" opacity="0.55"/>
+    <path d="M240 376L236 423" stroke="#92400E" stroke-width="4" stroke-linecap="round" opacity="0.45"/>
+    <path d="M272 376L276 423" stroke="#92400E" stroke-width="4" stroke-linecap="round" opacity="0.45"/>
+  </g>
+
+  <!-- Motion accents / breeze lines -->
+  <path d="M87 178C113 165 137 165 160 177" stroke="#93C5FD" stroke-width="7" stroke-linecap="round" opacity="0.45"/>
+  <path d="M357 278C384 267 409 270 432 286" stroke="#93C5FD" stroke-width="7" stroke-linecap="round" opacity="0.42"/>
+  <path d="M72 258C94 249 115 251 134 263" stroke="#F9A8D4" stroke-width="6" stroke-linecap="round" opacity="0.35"/>
+
+  <!-- Tiny sparkle accents -->
+  <path d="M407 115L414 130L429 137L414 144L407 159L400 144L385 137L400 130L407 115Z" fill="#FBBF24" opacity="0.85"/>
+  <path d="M105 103L110 114L121 119L110 124L105 135L100 124L89 119L100 114L105 103Z" fill="#FBBF24" opacity="0.75"/>
+</svg>

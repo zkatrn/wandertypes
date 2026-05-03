@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f5f7fa;
+  --foreground: #2e4a6b;
+  --primary: #2a4d7c;
+  --secondary: #e6b8d4;
+  --accent: #ffbb96;
+  --dark: #2e4a6b;
+}
+
+html {
+  background: var(--background);
+  overscroll-behavior: none;
+}
+
+body {
+  color: var(--foreground);
+  background: transparent;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  overscroll-behavior: none;
+}
+
+/* Mock parallax effect - slow horizontal pan (mobile-first: slower / less pan on small viewports) */
+@keyframes parallaxPan {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 100% center;
+  }
+}
+
+/* Narrow / short viewports: long cycle + smaller overscan = less distance & lower apparent speed */
+.bg-parallax {
+  animation: parallaxPan 90s linear infinite alternate;
+  background-size: 106% cover !important;
+}
+
+@media (min-width: 480px) {
+  .bg-parallax {
+    animation-duration: 72s;
+    background-size: 108% cover !important;
+  }
+}
+
+@media (min-width: 640px) {
+  .bg-parallax {
+    animation-duration: 58s;
+    background-size: 110% cover !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .bg-parallax {
+    animation-duration: 48s;
+    background-size: 112% cover !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .bg-parallax {
+    animation-duration: 38s;
+    background-size: 115% cover !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .bg-parallax {
+    animation-duration: 32s;
+    background-size: 118% cover !important;
+  }
+}
+
+@media (min-width: 1536px) {
+  .bg-parallax {
+    animation-duration: 26s;
+    background-size: 120% cover !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-parallax {
+    animation: none;
+    background-position: center center;
+  }
+}
+
+/* Twinkling stars animation */
+@keyframes twinkle {
+  0% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+.animate-twinkle {
+  animation: twinkle 3s ease-in-out infinite alternate;
+}

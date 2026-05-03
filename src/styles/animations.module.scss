@@ -1,0 +1,30 @@
+@mixin balloon-float-and-sway {
+  animation: floatAndSway 6s ease-in-out infinite;
+}
+
+@keyframes floatAndSway {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+
+  25% {
+    transform: translate3d(3px, -10px, 0) rotate(1deg);
+  }
+
+  50% {
+    transform: translate3d(0, -20px, 0) rotate(0deg);
+  }
+
+  75% {
+    transform: translate3d(-3px, -10px, 0) rotate(-1deg);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+}
+
+.balloonFloat {
+  @include balloon-float-and-sway;
+  will-change: transform;
+}
