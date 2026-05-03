@@ -9,7 +9,7 @@ export const FEATURE_FLAGS = {
    * Google Places Autocomplete
    * Set to false during development to avoid API costs
    */
-  GOOGLE_PLACES_AUTOCOMPLETE: true,
+  GOOGLE_PLACES_AUTOCOMPLETE: false,
   
   /**
    * Firebase Analytics
