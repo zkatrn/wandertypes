@@ -106,8 +106,25 @@ body {
   animation: twinkle 3s ease-in-out infinite alternate;
 }
 
-/* Google Places (New) — host fills survey destination row */
-gmp-place-autocomplete {
+/*
+ * Google Places UI Kit (`PlaceAutocompleteElement` / `gmp-place-autocomplete`)
+ * Follows prefers-color-scheme unless overridden — force light to match survey UI.
+ * @see https://developers.google.com/maps/documentation/javascript/places-ui-kit/custom-styling
+ */
+.places-autocomplete-root {
+  color-scheme: light;
+}
+
+.places-autocomplete-root gmp-place-autocomplete {
   display: block;
   width: 100%;
+  color-scheme: light;
+  --gmp-mat-color-surface: #ffffff;
+  --gmp-mat-color-on-surface: #1c1917;
+  --gmp-mat-color-on-surface-variant: #57534e;
+  --gmp-mat-color-primary: #2a4d7c;
+  --gmp-mat-color-outline-decorative: #e7e5e4;
+  --gmp-mat-font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
 }
