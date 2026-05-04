@@ -55,7 +55,7 @@ function orderedFactsForPhrases(phrases: string[] | undefined): string[] {
 }
 
 type LoadingScreenProps = {
-  /** Uppercase-style brand line (reference HTML used "Wandermoodz"). */
+  /** Uppercase-style brand line in the loading UI. */
   brandLabel?: string;
   /** Status lines; progress dots count matches length. */
   statusSteps?: readonly string[] | string[];
@@ -76,7 +76,7 @@ function generateStars(): StarSpec[] {
 }
 
 export function LoadingScreen({
-  brandLabel = "LumiTrip",
+  brandLabel = "VoyageBlitz",
   statusSteps: statusStepsProp,
   relatedPhrases,
   children,

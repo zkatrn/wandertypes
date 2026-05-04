@@ -59,7 +59,7 @@ export default function TripsPage() {
     return (
       <LoadingScreen
         statusSteps={["Loading your trips..."]}
-        brandLabel="LumiTrip"
+        brandLabel="VoyageBlitz"
       />
     );
   }

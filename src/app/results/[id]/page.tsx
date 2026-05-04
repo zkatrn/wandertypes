@@ -120,7 +120,7 @@ export default function SharedResultsPage() {
 
         {/* Footer */}
         <p className="text-center mt-12 text-xs text-stone-500 italic tracking-wide">
-          Built with Wandermoodz · Your trip, matched to you 🎈
+          Built with VoyageBlitz · Your trip, matched to you 🎈
         </p>
         </div>
       </div>

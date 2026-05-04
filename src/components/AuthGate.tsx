@@ -37,7 +37,7 @@ export function AuthGate({ children }: AuthGateProps) {
     return (
       <LoadingScreen
         statusSteps={["Checking your session..."]}
-        brandLabel="LumiTrip"
+        brandLabel="VoyageBlitz"
       />
     );
   }

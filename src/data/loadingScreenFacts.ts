@@ -1,4 +1,4 @@
-/** Exact travel facts from Wandermoodz loading_screen.html (Did you know rotation). */
+/** Travel facts for the loading screen “Did you know” rotation. */
 export const LOADING_SCREEN_FACTS: string[] = [
   "Costa Rica generates nearly 100% of its electricity from renewable energy.",
   "Japan has more Michelin-starred restaurants than any other country in the world.",

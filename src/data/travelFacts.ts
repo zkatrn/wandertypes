@@ -1,4 +1,4 @@
-/** Curated travel facts for loading states (from Wandermoodz content pack). */
+/** Curated travel facts for loading states. */
 export const TRAVEL_FACTS: string[] = [
 
   // Nature & Geography

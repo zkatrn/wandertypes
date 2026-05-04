@@ -12,7 +12,7 @@ export function Footer() {
           {/* Logo and tagline */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Image src={balloonImage} alt="LumiTrip" width={32} height={32} />
+              <Image src={balloonImage} alt="VoyageBlitz" width={32} height={32} />
               <span className="text-lg font-bold text-stone-900">VoyageBlitz</span>
             </div>
             <p className="text-sm text-stone-600">
@@ -52,7 +52,7 @@ export function Footer() {
             <h3 className="font-semibold text-stone-900 mb-4">Contact</h3>
             <ul className="space-y-2 text-sm text-stone-600">
               <li>
-                <a href="mailto:hello@lumitrip.com" className="hover:text-primary transition-colors">
+                <a href="mailto:hello@voyageblitz.com" className="hover:text-primary transition-colors">
                   hello@voyageblitz.com
                 </a>
               </li>

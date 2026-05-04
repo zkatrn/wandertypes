@@ -1,6 +1,6 @@
 # CURSOR_START_HERE.md
 
-# Lumitrip — Cursor Kickoff Prompt
+# VoyageBlitz — Cursor Kickoff Prompt
 
 Copy/paste the prompt below into Cursor Chat or Cursor Agent after you place the project docs into your repo.
 
@@ -11,11 +11,11 @@ You can edit the file paths if your docs live somewhere else.
 # Initial Cursor Prompt
 
 ```text
-You are helping me build a new Next.js app called Lumitrip.
+You are helping me build a new Next.js app called VoyageBlitz.
 
-Lumitrip is a warm, friendly, emotionally-aware travel planning app. The MVP is a survey-first experience where a user answers reflective travel questions, signs in with Google, and receives a personalized destination/activity comparison page with a theme selected from their answers.
+VoyageBlitz is a warm, friendly, emotionally-aware travel planning app. The MVP is a survey-first experience where a user answers reflective travel questions, signs in with Google, and receives a personalized destination/activity comparison page with a theme selected from their answers.
 
-Before writing code, read the project documents in this order in this directory /Users/kzivkovic/Documents/LumiTrip:
+Before writing code, read the project documents in this order in the directory where you placed those docs (edit the path if yours differs):
 
 1. ./DO_THIS.md
    - This is the immediate setup checklist and practical implementation guide.
@@ -38,7 +38,7 @@ Before writing code, read the project documents in this order in this directory 
 5. ./MASCOT_AND_ICONS.md
    - This defines the mascot direction and icon usage.
    - Use Lucide React icons unless otherwise specified.
-   - The mascot is Lumi, a cute travel-guide cat. Do not overcomplicate the first version; placeholders are fine.
+   - Include a friendly travel mascot direction; do not overcomplicate the first version — placeholders are fine.
 
 6. ./.cursor/rules/product.mdc
 7. ./.cursor/rules/frontend.mdc
@@ -198,19 +198,19 @@ Requirements:
 Recommended repo name:
 
 ```text
-lumitrip
+voyageblitz
 ```
 
 Recommended Firebase project name:
 
 ```text
-lumitrip-dev
+voyageblitz-dev
 ```
 
 Recommended Firebase web app name:
 
 ```text
-lumitrip-web
+voyageblitz-web
 ```
 
 Keep the first build small. The product does not need to solve all travel planning immediately. The MVP only needs to prove that the survey → personalized result page feels useful and delightful.

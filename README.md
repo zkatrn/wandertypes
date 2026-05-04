@@ -1,4 +1,4 @@
-# Lumitrip
+# VoyageBlitz
 
 A warm, emotionally-aware travel planning app that helps you understand what kind of trip you actually want.
 

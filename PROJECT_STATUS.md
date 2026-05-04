@@ -1,4 +1,4 @@
-# Lumitrip - Milestone 1 Complete ✓
+# VoyageBlitz - Milestone 1 Complete ✓
 
 ## What's Been Built
 

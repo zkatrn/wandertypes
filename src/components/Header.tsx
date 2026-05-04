@@ -74,16 +74,10 @@ export function Header() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2">
-            <Image src={balloonImage} alt="LumiTrip" width={32} height={32} />
+            <Image src={balloonImage} alt="VoyageBlitz" width={32} height={32} />
             <span className="text-lg font-serif font-bold text-primary">
               VoyageBlitz
             </span>
-          </Link>
-          <Link
-            href="/about"
-            className="text-sm font-medium text-stone-600 hover:text-primary transition-colors hidden sm:inline"
-          >
-            About
           </Link>
         </div>
 

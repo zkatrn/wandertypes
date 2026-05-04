@@ -76,7 +76,7 @@ export function LandingMarketingSections({
             </div>
             <div className="rounded-2xl border border-primary/25 bg-white/90 p-6 shadow-md ring-1 ring-primary/10">
               <span className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">
-                LumiTrip
+                VoyageBlitz
               </span>
               <p className="text-sm italic leading-relaxed text-stone-800">
                 &ldquo;Based on how you want to feel on this trip, here&apos;s
