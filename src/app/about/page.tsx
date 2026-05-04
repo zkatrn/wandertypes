@@ -11,7 +11,7 @@ export default function AboutPage() {
   return (
     <main className="relative min-h-screen text-stone-900">
       <div
-        className="fixed inset-0 z-0 pointer-events-none bg-cover bg-center bg-no-repeat"
+        className="fixed inset-0 z-0 pointer-events-none bg-app-photo-backdrop"
         style={{ backgroundImage: "url(/about-bg.png)" }}
         aria-hidden
       />

@@ -76,17 +76,9 @@ To integrate this with your results page:
 3. Handle errors gracefully
 4. Consider caching results in Firestore for authenticated users
 
-## Google Maps & Places (New)
+## Survey destinations
 
-`PlaceAutocompleteElement` (survey destination fields) calls **Places API (New)** (`places.googleapis.com`), not only the older “Places API” product.
-
-1. In [Google Cloud Console](https://console.cloud.google.com/), select the project tied to `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`.
-2. Enable **Maps JavaScript API** (if not already).
-3. Enable **[Places API (New)](https://console.cloud.google.com/apis/library/places.googleapis.com)**. Without this, autocomplete returns `403` and the widget logs that the API is disabled.
-4. After enabling, wait a few minutes for propagation, then hard-refresh the site.
-5. **API key restrictions:** for browser keys, add HTTP referrers (e.g. `https://www.yourdomain.com/*`, `http://localhost:3000/*` for dev).
-
-The Places UI Kit follows the user’s light/dark OS preference unless overridden; this app forces a **light** appearance for `gmp-place-autocomplete` in `globals.css` so it matches the survey.
+Step 0 uses **plain text** inputs for destinations. There is **no** Google Maps / Places JavaScript API in this app (no API keys, billing, or browser calls to Google for autocomplete).
 
 ### Testing
 

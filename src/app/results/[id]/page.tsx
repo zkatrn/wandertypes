@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { getTripSession } from "@/lib/firestore";
 import { getTheme } from "@/lib/themes";
@@ -11,6 +11,8 @@ import { TwinklingStars } from "@/components/results/TwinklingStars";
 import { comparisonGridClassName } from "@/lib/resultsLayout";
 import type { TripInterpretation } from "@/types/interpretation";
 import { AlertCircle } from "lucide-react";
+import { LoadingTravelFact } from "@/components/LoadingTravelFact";
+import { loadSurveyAnswers } from "@/lib/surveyStorage";
 
 export default function SharedResultsPage() {
   const params = useParams();
@@ -18,6 +20,14 @@ export default function SharedResultsPage() {
   const [interpretation, setInterpretation] = useState<TripInterpretation | null>(null);
   const [loading, setLoading] = useState(true);
   const [backgroundImage, setBackgroundImage] = useState<string>("/bg.png");
+
+  const travelFactHints = useMemo(() => {
+    const a = loadSurveyAnswers();
+    return [
+      ...(a?.destinations ?? []),
+      ...(a?.destinationList ?? []),
+    ].filter((s): s is string => Boolean(s?.trim()));
+  }, []);
 
   useEffect(() => {
     async function loadSession() {
@@ -54,6 +64,10 @@ export default function SharedResultsPage() {
         <div className="text-center">
           <div className="animate-spin w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full mx-auto mb-4" />
           <p className="text-stone-200">Loading your travel comparison...</p>
+          <LoadingTravelFact
+            relatedPhrases={travelFactHints}
+            className="mt-8 text-stone-300/95"
+          />
         </div>
       </div>
     );
@@ -77,12 +91,11 @@ export default function SharedResultsPage() {
     <>
       {/* Background image with parallax */}
       <div
-        className="fixed inset-0 z-0 bg-parallax pointer-events-none"
+        className="fixed inset-0 z-0 bg-app-photo-backdrop bg-parallax pointer-events-none"
         style={{
           backgroundImage: `url(${backgroundImage})`,
-          backgroundPosition: 'center',
-          backgroundAttachment: 'scroll',
-          filter: 'opacity(0.5) saturate(0.5) brightness(1.15)',
+          backgroundAttachment: "scroll",
+          filter: "opacity(0.5) saturate(0.5) brightness(1.15)",
         }}
         aria-hidden
       />

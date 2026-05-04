@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
@@ -8,6 +8,7 @@ import { loadSurveyAnswers } from "@/lib/surveyStorage";
 import { saveTripSession, generateSessionId } from "@/lib/firestore";
 import { getTheme } from "@/lib/themes";
 import { AuthGate } from "@/components/AuthGate";
+import { LoadingTravelFact } from "@/components/LoadingTravelFact";
 import { WandertypeBanner } from "@/components/results/WandertypeBanner";
 import { DestinationCard } from "@/components/results/DestinationCard";
 import { ResultsInsightsAccordions } from "@/components/results/ResultsInsightsAccordions";
@@ -26,6 +27,14 @@ export default function ResultsPage() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [retryKey, setRetryKey] = useState(0);
   const sessionSavedRef = useRef(false);
+
+  const travelFactHints = useMemo(() => {
+    const a = loadSurveyAnswers();
+    return [
+      ...(a?.destinations ?? []),
+      ...(a?.destinationList ?? []),
+    ].filter((s): s is string => Boolean(s?.trim()));
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -123,7 +132,13 @@ export default function ResultsPage() {
             ) : (
               <>
                 <div className="animate-spin w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full mx-auto mb-4" />
-                <p className="text-stone-200">Generating your personalized comparison...</p>
+                <p className="text-stone-200">
+                  Generating your personalized comparison...
+                </p>
+                <LoadingTravelFact
+                  relatedPhrases={travelFactHints}
+                  className="mt-8 text-stone-300/95"
+                />
               </>
             )}
           </div>
@@ -140,12 +155,11 @@ export default function ResultsPage() {
       <>
         {/* Background image with parallax */}
         <div
-          className="fixed inset-0 z-0 bg-parallax pointer-events-none"
+          className="fixed inset-0 z-0 bg-app-photo-backdrop bg-parallax pointer-events-none"
           style={{
             backgroundImage: `url(${backgroundImage})`,
-            backgroundPosition: 'center',
-            backgroundAttachment: 'scroll',
-            filter: 'opacity(0.5) saturate(0.5) brightness(1.15)',
+            backgroundAttachment: "scroll",
+            filter: "opacity(0.5) saturate(0.5) brightness(1.15)",
           }}
           aria-hidden
         />

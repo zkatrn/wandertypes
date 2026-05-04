@@ -63,12 +63,13 @@ export function Step0({ destinationList, onUpdate, onNext }: Step0Props) {
       <SurveyStepHeader
         icon={
           <div className={styles.balloonFloat}>
-            <Image 
-              src={balloonImage} 
-              alt="Hot air balloon" 
-              width={200} 
-              height={200} 
-              className="mx-auto drop-shadow-lg" 
+            <Image
+              src={balloonImage}
+              alt="Hot air balloon"
+              width={200}
+              height={200}
+              priority
+              className="mx-auto drop-shadow-lg"
             />
           </div>
         }

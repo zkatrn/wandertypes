@@ -61,7 +61,13 @@ export function SurveyHeader() {
     <div className="flex items-center justify-between">
       {/* Logo on the left */}  
       <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-        <Image src={balloonImage} alt="WanderMoodz" width={32} height={32} />
+        <Image
+          src={balloonImage}
+          alt="WanderMoodz"
+          width={32}
+          height={32}
+          priority
+        />
         <span className="text-lg font-serif font-bold text-primary">WanderMoodz</span>
       </Link>
 

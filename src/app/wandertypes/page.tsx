@@ -18,11 +18,9 @@ export default function WanderTypesPage() {
   return (
     <>
       <div
-        className="fixed inset-0 z-0"
+        className="fixed inset-0 z-0 bg-app-photo-backdrop"
         style={{
           backgroundImage: "url(/bg.png)",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
           backgroundAttachment: "fixed",
           filter: "saturate(0.5) brightness(1.05)",
         }}
