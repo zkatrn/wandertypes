@@ -1,4 +1,6 @@
+import type { SurveyAnswers } from "@/types/survey";
 import { THEME_KEYS } from "@/lib/tripInterpretationAiSchema";
+import { listedPlaces, looksLikeSpecificPlaceName } from "@/lib/comparisonCardPolicy";
 
 /**
  * Instructions for the model: output must validate against
@@ -6,6 +8,27 @@ import { THEME_KEYS } from "@/lib/tripInterpretationAiSchema";
  * (normalized server-side into `TripInterpretation`).
  */
 export function buildInterpretTripUserPrompt(surveyAnswers: unknown): string {
+  const places =
+    surveyAnswers && typeof surveyAnswers === "object"
+      ? listedPlaces(surveyAnswers as SurveyAnswers)
+      : [];
+  const chooseForMe =
+    surveyAnswers &&
+    typeof surveyAnswers === "object" &&
+    (surveyAnswers as { chooseForMe?: boolean }).chooseForMe === true;
+  const singlePlace = places.length === 1 ? places[0] : null;
+  const singleCityStyle = singlePlace && looksLikeSpecificPlaceName(singlePlace);
+
+  const destinationRules = chooseForMe
+    ? `- User chose "choose for me" (no fixed list): return **1–3** comparisonCards for distinct destinations that fit the survey (never more than 3). Each destinationName must be different.`
+    : places.length === 0
+      ? `- No destinations listed: return **1–3** comparisonCards (max 3), all distinct places.`
+      : singleCityStyle
+        ? `- User listed exactly **one specific place** ("${singlePlace}"). Return **exactly 1** comparisonCard. Its destinationName must be that same string (or trivial spacing fix only). Do **not** add other cities, regions, or alternates — the whole board is about this one place only.`
+        : places.length === 1
+          ? `- User listed one **broad** place (country/region, no comma in the name): "${singlePlace}". Return **up to 3** comparisonCards for **different** bases or areas within that same country/region only (no fourth card; no duplicate destinationName).`
+          : `- User listed ${places.length} places: ${places.join(" | ")}. Return **at most 3** cards total — prefer **one card per listed place** (in that order) when the survey implies comparing those picks. Each destinationName must be unique (no duplicates). If you cannot justify a listed place, omit it rather than inventing a fourth destination.`;
+
   return `You are the Trip Interpreter for VoyageBlitz. You receive survey answers and return ONE JSON object only (no markdown, no commentary).
 
 ## Input: survey answers
@@ -16,7 +39,7 @@ If \`tripLengthNights\` is present, it is one of: "2-4_nights", "5-7_nights", "8
 ## Output contract (strict keys)
 Return a JSON object with exactly these top-level keys:
 - selectedTheme: string, MUST be one of: ${THEME_KEYS.join(", ")}
-- comparisonCards: array of 1–5 destination comparison objects
+- comparisonCards: array of destination comparison objects (see destination rules below — **at most 3** cards)
 - tradeoffWarnings: string[] — 2–5 items. Each line should be specific and place-aware: name real hubs or regions from the comparison, compare relative positions (e.g. day-trip distance between two named spots), call out realistic drive or train time ranges when inferable from the survey (home airport, origin city, listed destinations), seasonal crowding where it hits worst, and one logistics trap (parking, last-mile walk, ferry schedules). Avoid vague filler like "do your research" with no location.
 - destinationPreferences: string[] (short tags, e.g. "beach + jungle")
 - activityPreferences: string[] (from survey or inferred)
@@ -48,6 +71,9 @@ Strongly include (server can backfill if missing, but you should provide them):
 - airbnbListings: array of { label: string, url: string } — ONLY if the user pasted listing URLs in survey notes; otherwise use []
 
 Do NOT include driving distance or minutes to the airport in JSON — the server may attach Google Distance Matrix data when configured.
+
+## Destination / comparison count (must follow)
+${destinationRules}
 
 Rules:
 - Never invent live prices or availability.

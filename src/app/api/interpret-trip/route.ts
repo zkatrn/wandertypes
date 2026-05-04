@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import type { TripInterpretation } from "@/types/interpretation";
+import type { SurveyAnswers } from "@/types/survey";
 import { normalizeTripInterpretation } from "@/lib/normalizeInterpretation";
 import {
   aiTripInterpretationResponseSchema,
@@ -8,6 +9,7 @@ import {
 } from "@/lib/tripInterpretationAiSchema";
 import { buildInterpretTripUserPrompt } from "@/lib/interpretTripPrompt";
 import { enrichAllCardsAirportDistances } from "@/lib/googleMapsAirportEnrichment";
+import { applyComparisonCardPolicy } from "@/lib/comparisonCardPolicy";
 import { extractTextFromAnthropicMessageContent } from "@/lib/anthropicMessageText";
 
 const anthropic = new Anthropic({
@@ -74,6 +76,11 @@ export async function POST(request: NextRequest) {
     let interpretation = normalizeTripInterpretation({
       ...(validated.data as unknown as Partial<TripInterpretation>),
     });
+
+    interpretation = applyComparisonCardPolicy(
+      interpretation,
+      surveyAnswers as SurveyAnswers
+    );
 
     const googleMapsKey = process.env.GOOGLE_MAPS_API_KEY;
     if (googleMapsKey) {

@@ -2,6 +2,7 @@ import type { SurveyAnswers } from "@/types/survey";
 import type { TripInterpretation } from "@/types/interpretation";
 import { generateMockInterpretation } from "@/lib/mockInterpretation";
 import { normalizeTripInterpretation } from "@/lib/normalizeInterpretation";
+import { applyComparisonCardPolicy } from "@/lib/comparisonCardPolicy";
 
 export type TripInterpretationSource = "ai" | "fallback";
 
@@ -45,10 +46,12 @@ export async function fetchTripInterpretation(
   }
   try {
     const raw = generateMockInterpretation(surveyAnswers);
+    let interpretation = normalizeTripInterpretation(
+      raw as Partial<TripInterpretation> & Record<string, unknown>
+    );
+    interpretation = applyComparisonCardPolicy(interpretation, surveyAnswers);
     return {
-      interpretation: normalizeTripInterpretation(
-        raw as Partial<TripInterpretation> & Record<string, unknown>
-      ),
+      interpretation,
       source: "fallback",
     };
   } catch (e) {

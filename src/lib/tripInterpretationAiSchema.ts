@@ -30,7 +30,7 @@ export const aiComparisonCardSchema = z
 
 export const aiTripInterpretationResponseSchema = z.object({
   selectedTheme: themeKeySchema,
-  comparisonCards: z.array(aiComparisonCardSchema).min(1).max(5),
+  comparisonCards: z.array(aiComparisonCardSchema).min(1).max(3),
   tradeoffWarnings: z.array(z.string()).optional().default([]),
   destinationPreferences: z.array(z.string()).optional().default([]),
   activityPreferences: z.array(z.string()).optional().default([]),

@@ -11,16 +11,13 @@ import {
   heuristicVerdictGood,
   heuristicVerdictWatch,
 } from "@/lib/destinationHeuristics";
+import { listedPlaces, MAX_COMPARISON_CARDS } from "@/lib/comparisonCardPolicy";
 
 function userPickedDestinationList(answers: SurveyAnswers): string[] | null {
-  const fromList =
-    answers.destinationList?.map((s) => String(s).trim()).filter(Boolean) ?? [];
-  const fromDest =
-    answers.destinations?.map((s) => String(s).trim()).filter(Boolean) ?? [];
-  const merged = fromList.length > 0 ? fromList : fromDest;
-  if (merged.length === 0) return null;
   if (answers.chooseForMe === true) return null;
-  return merged;
+  const merged = listedPlaces(answers);
+  if (merged.length === 0) return null;
+  return merged.slice(0, MAX_COMPARISON_CARDS);
 }
 
 export function generateMockInterpretation(

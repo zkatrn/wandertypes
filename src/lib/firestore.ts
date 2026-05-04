@@ -14,6 +14,7 @@ import {
 import type { TripInterpretation } from "@/types/interpretation";
 import type { SurveyAnswers } from "@/types/survey";
 import { normalizeTripInterpretation } from "@/lib/normalizeInterpretation";
+import { applyComparisonCardPolicy } from "@/lib/comparisonCardPolicy";
 
 export type TripSession = {
   id: string;
@@ -48,13 +49,16 @@ export async function getTripSession(sessionId: string): Promise<TripSession | n
   }
   
   const data = sessionSnap.data();
+  const surveyAnswers = data.surveyAnswers;
+  let interpretation = normalizeTripInterpretation(
+    data.interpretation as Partial<TripInterpretation> & Record<string, unknown>
+  );
+  interpretation = applyComparisonCardPolicy(interpretation, surveyAnswers);
   return {
     id: sessionId,
     userId: data.userId,
-    surveyAnswers: data.surveyAnswers,
-    interpretation: normalizeTripInterpretation(
-      data.interpretation as Partial<TripInterpretation> & Record<string, unknown>
-    ),
+    surveyAnswers,
+    interpretation,
     createdAt: data.createdAt?.toDate() || new Date(),
   };
 }
@@ -71,13 +75,16 @@ export async function getUserTripSessions(userId: string): Promise<TripSession[]
   
   querySnapshot.forEach((doc) => {
     const data = doc.data();
+    const surveyAnswers = data.surveyAnswers;
+    let interpretation = normalizeTripInterpretation(
+      data.interpretation as Partial<TripInterpretation> & Record<string, unknown>
+    );
+    interpretation = applyComparisonCardPolicy(interpretation, surveyAnswers);
     sessions.push({
       id: doc.id,
       userId: data.userId,
-      surveyAnswers: data.surveyAnswers,
-      interpretation: normalizeTripInterpretation(
-        data.interpretation as Partial<TripInterpretation> & Record<string, unknown>
-      ),
+      surveyAnswers,
+      interpretation,
       createdAt: data.createdAt?.toDate() || new Date(),
     });
   });
