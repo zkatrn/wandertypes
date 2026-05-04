@@ -1,13 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { getTripSession } from "@/lib/firestore";
+import { onAuthStateChanged, type User } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { getTripSession, type TripSession } from "@/lib/firestore";
 import { getTheme } from "@/lib/themes";
 import { WandertypeBanner } from "@/components/results/WandertypeBanner";
 import { DestinationCard } from "@/components/results/DestinationCard";
 import { ResultsInsightsAccordions } from "@/components/results/ResultsInsightsAccordions";
 import { TwinklingStars } from "@/components/results/TwinklingStars";
+import { ResultsSaveShareToolbar } from "@/components/results/ResultsSaveShareToolbar";
+import { AuthPromptModal } from "@/components/auth/AuthPromptModal";
 import { comparisonGridClassName } from "@/lib/resultsLayout";
 import type { TripInterpretation } from "@/types/interpretation";
 import { AlertCircle } from "lucide-react";
@@ -16,25 +20,35 @@ import { SimplePageLoader } from "@/components/loading/SimplePageLoader";
 export default function SharedResultsPage() {
   const params = useParams();
   const sessionId = params.id as string;
+  const [session, setSession] = useState<TripSession | null>(null);
   const [interpretation, setInterpretation] = useState<TripInterpretation | null>(null);
   const [loading, setLoading] = useState(true);
   const [backgroundImage, setBackgroundImage] = useState<string>("/bg.png");
+  const [user, setUser] = useState<User | null>(null);
+  const [shareCopied, setShareCopied] = useState(false);
+  const [shareBusy, setShareBusy] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const pendingShareRef = useRef(false);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, setUser);
+    return () => unsub();
+  }, []);
 
   useEffect(() => {
     async function loadSession() {
       try {
-        const session = await getTripSession(sessionId);
-        if (session) {
-          setInterpretation(session.interpretation);
-          
-          // Set theme-specific background with parallax
-          const theme = getTheme(session.interpretation.selectedTheme);
+        const s = await getTripSession(sessionId);
+        if (s) {
+          setSession(s);
+          setInterpretation(s.interpretation);
+
+          const theme = getTheme(s.interpretation.selectedTheme);
           const img = new Image();
           img.onload = () => {
             setBackgroundImage(theme.backgroundImage);
           };
           img.onerror = () => {
-            // Fallback to default background if theme image doesn't exist
             setBackgroundImage("/bg.png");
           };
           img.src = theme.backgroundImage;
@@ -46,8 +60,39 @@ export default function SharedResultsPage() {
       }
     }
 
-    loadSession();
+    void loadSession();
   }, [sessionId]);
+
+  const copyShareUrl = useCallback(async () => {
+    setShareBusy(true);
+    setShareCopied(false);
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setShareCopied(true);
+      window.setTimeout(() => setShareCopied(false), 2500);
+    } catch (error) {
+      console.error("Copy failed:", error);
+    } finally {
+      setShareBusy(false);
+    }
+  }, []);
+
+  const handleShareClick = useCallback(() => {
+    if (!auth.currentUser) {
+      pendingShareRef.current = true;
+      setAuthModalOpen(true);
+      return;
+    }
+    void copyShareUrl();
+  }, [copyShareUrl]);
+
+  const onAuthSignedIn = useCallback(() => {
+    setAuthModalOpen(false);
+    if (pendingShareRef.current) {
+      pendingShareRef.current = false;
+      void copyShareUrl();
+    }
+  }, [copyShareUrl]);
 
   if (loading) {
     return (
@@ -55,25 +100,41 @@ export default function SharedResultsPage() {
     );
   }
 
-  if (!interpretation) {
+  if (!interpretation || !session) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-sky-900 via-indigo-800 to-blue-900">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-900 via-indigo-800 to-blue-900 p-4">
         <div className="text-center">
-          <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Results Not Found</h2>
-          <p className="text-stone-200">This travel comparison doesn't exist or has been deleted.</p>
+          <AlertCircle className="mx-auto mb-4 h-16 w-16 text-red-400" />
+          <h2 className="mb-2 text-2xl font-bold text-white">Results Not Found</h2>
+          <p className="text-stone-200">
+            This travel comparison doesn&apos;t exist or has been deleted.
+          </p>
         </div>
       </div>
     );
   }
 
   const theme = getTheme(interpretation.selectedTheme);
+  const isOwner = Boolean(
+    user?.uid && session.userId && user.uid === session.userId
+  );
+  const bannerAnswers = isOwner ? session.surveyAnswers : null;
 
   return (
     <>
-      {/* Background image with parallax */}
+      <AuthPromptModal
+        open={authModalOpen}
+        onClose={() => {
+          pendingShareRef.current = false;
+          setAuthModalOpen(false);
+        }}
+        onSignedIn={onAuthSignedIn}
+        title="Sign in to share"
+        description="Sign in with Google to copy a link to this comparison."
+      />
+
       <div
-        className="fixed inset-0 z-0 bg-app-photo-backdrop bg-parallax pointer-events-none"
+        className="pointer-events-none fixed inset-0 z-0 bg-app-photo-backdrop bg-parallax"
         style={{
           backgroundImage: `url(${backgroundImage})`,
           backgroundAttachment: "scroll",
@@ -82,39 +143,41 @@ export default function SharedResultsPage() {
         aria-hidden
       />
 
-        <div className="min-h-screen text-stone-900 relative z-10">
-          <TwinklingStars />
-          <div className="relative z-10 max-w-5xl mx-auto px-6 py-12">
-        {/* Wandertype Banner */}
-        <WandertypeBanner theme={theme} surveyAnswers={null} />
+      <div className="relative z-10 min-h-screen text-stone-900">
+        <TwinklingStars />
+        <div className="relative z-10 mx-auto max-w-5xl px-6 py-12">
+          <ResultsSaveShareToolbar
+            shareDisabled={shareBusy}
+            onShare={handleShareClick}
+            shareCopied={shareCopied}
+          />
 
-        {/* Section Label */}
-        <div className="text-[10px] uppercase tracking-wide text-stone-400 font-medium mb-5 pb-3 border-b border-stone-200">
-          Your Destinations — Matched to Your Profile
-        </div>
+          <WandertypeBanner theme={theme} surveyAnswers={bannerAnswers} />
 
-        {/* Destination Cards Grid */}
-        <div
-          className={`${comparisonGridClassName(
-            interpretation.comparisonCards.length
-          )} mb-12`}
-        >
-          {interpretation.comparisonCards.map((card, index) => (
-            <DestinationCard
-              key={card.destinationName}
-              card={card}
-              index={index}
-              theme={theme}
-            />
-          ))}
-        </div>
+          <div className="mb-5 border-b border-stone-200 pb-3 text-[10px] font-medium uppercase tracking-wide text-stone-400">
+            Your Destinations — Matched to Your Profile
+          </div>
 
-        <ResultsInsightsAccordions interpretation={interpretation} />
+          <div
+            className={`${comparisonGridClassName(
+              interpretation.comparisonCards.length
+            )} mb-12`}
+          >
+            {interpretation.comparisonCards.map((card, index) => (
+              <DestinationCard
+                key={card.destinationName}
+                card={card}
+                index={index}
+                theme={theme}
+              />
+            ))}
+          </div>
 
-        {/* Footer */}
-        <p className="text-center mt-12 text-xs text-stone-500 italic tracking-wide">
-          Built with VoyageBlitz · Your trip, matched to you 🎈
-        </p>
+          <ResultsInsightsAccordions interpretation={interpretation} />
+
+          <p className="mt-12 text-center text-xs italic tracking-wide text-stone-500">
+            Built with VoyageBlitz · Your trip, matched to you 🎈
+          </p>
         </div>
       </div>
     </>
