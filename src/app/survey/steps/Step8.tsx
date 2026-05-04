@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { SurveyStepHeader } from "@/components/SurveyStepHeader";
 import { SurveyFooter } from "@/components/SurveyFooter";
-import { MessageSquare, Heart, Eye, Utensils, Mountain, HeartHandshake, Shuffle, Coffee, Sun, Scale, Zap, Calendar, Waves, Trees, Landmark, Building2, BedDouble, MapPin, User, UsersRound, Home, Users, CheckCircle, Circle, AlertCircle, XCircle, Compass, Wind, Search, Droplets, Squirrel, Footprints, UtensilsCrossed, Flame, Fish, Music, Building, ShoppingBag, Sparkles, Car, Ship, ThumbsUp, Check, Meh, X, Route, DollarSign, CircleDollarSign, Gem, Crown, Edit2 } from "lucide-react";
+import { MessageSquare, Heart, Eye, Utensils, Mountain, HeartHandshake, Shuffle, Coffee, Sun, Scale, Zap, Calendar, Waves, Trees, Landmark, Building2, BedDouble, MapPin, Palmtree, User, UsersRound, Home, Users, CheckCircle, Circle, AlertCircle, XCircle, Compass, Wind, Search, Droplets, Squirrel, Footprints, UtensilsCrossed, Flame, Fish, Music, Building, ShoppingBag, Sparkles, Car, Ship, ThumbsUp, Check, Meh, X, Route, DollarSign, CircleDollarSign, Gem, Crown, Edit2 } from "lucide-react";
 import type { SurveyAnswers } from "@/types/survey";
 
 type Step8Props = {
@@ -34,7 +34,7 @@ const paceOptions = [
 ];
 
 const environmentOptions = [
-  { value: "ocean", label: "Ocean air and soft sand", icon: Waves },
+  { value: "ocean", label: "Ocean air and soft sand", icon: Palmtree },
   { value: "rainforest", label: "Rainforest and waterfalls", icon: Trees },
   { value: "mountains", label: "Mountains and wide-open views", icon: Mountain },
   { value: "culture", label: "Colorful streets, local food, culture", icon: Landmark },

@@ -3,8 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import balloonImage from "@/lib/assets/balloon.png";
-import { Sparkles, Coffee, Palmtree, Users, Compass, Route, DollarSign, MessageSquareText } from "lucide-react";
 import styles from "@/styles/ProgressBar.module.scss";
+import type { SurveyAnswers } from "@/types/survey";
+import { getSurveyProgressMarkerIcon } from "@/lib/surveyProgressIcons";
 
 type ProgressBarProps = {
   current: number;
@@ -12,20 +13,18 @@ type ProgressBarProps = {
   maxStepReached?: number;
   onStepClick?: (step: number) => void;
   isFinalAnimation?: boolean;
+  /** Current survey answers — used to show each step’s chosen option icon (⭐ until answered). */
+  answers?: SurveyAnswers;
 };
 
-const stepIcons = [
-  Sparkles,           // Step 1: Trip Mood
-  Coffee,             // Step 2: Travel Pace
-  Palmtree,           // Step 3: Environment
-  Users,              // Step 4: Group Reality
-  Compass,            // Step 5: Activities
-  Route,              // Step 6: Trip Friction Tolerance
-  DollarSign,         // Step 7: Budget Feel
-  MessageSquareText,  // Step 8: Open Text
-];
-
-export function ProgressBar({ current, total, maxStepReached, onStepClick, isFinalAnimation }: ProgressBarProps) {
+export function ProgressBar({
+  current,
+  total,
+  maxStepReached,
+  onStepClick,
+  isFinalAnimation,
+  answers,
+}: ProgressBarProps) {
   const maxReached = maxStepReached || current;
   const progressPercentage = (maxReached / total) * 100;
   // Keep balloon visible on final step by capping at 95%
@@ -88,7 +87,7 @@ export function ProgressBar({ current, total, maxStepReached, onStepClick, isFin
         {Array.from({ length: total }, (_, idx) => {
           const stepNumber = idx + 1;
           const stepPercentage = (stepNumber / total) * 100;
-          const Icon = stepIcons[idx];
+          const Icon = getSurveyProgressMarkerIcon(stepNumber, answers);
           const isDone = idx < maxReached - 1;
           const isActive = idx === current - 1;
           const isClickable = stepNumber <= maxReached;

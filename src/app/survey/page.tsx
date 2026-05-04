@@ -93,12 +93,13 @@ export default function SurveyPage() {
         
         {/* Centered progress bar */}
         <div className="px-4 max-w-3xl mx-auto">
-          <ProgressBar 
-            current={step} 
-            total={8} 
+          <ProgressBar
+            current={step}
+            total={8}
             maxStepReached={maxStepReached}
             onStepClick={goToStep}
             isFinalAnimation={isFinalAnimation}
+            answers={answers}
           />
 
         {step === 1 && (

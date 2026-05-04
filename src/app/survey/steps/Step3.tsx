@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/Card";
 import { SurveyStepHeader } from "@/components/SurveyStepHeader";
 import { SurveyFooter } from "@/components/SurveyFooter";
-import { Palmtree, Waves, Trees, Mountain, Building2, Landmark, BedDouble, MapPin } from "lucide-react";
+import { Palmtree, Trees, Mountain, Building2, Landmark, BedDouble, MapPin } from "lucide-react";
 
 type Step3Props = {
   selected?: string;
@@ -16,7 +16,7 @@ export function Step3({ selected, onSelect, onNext, onBack }: Step3Props) {
       value: "ocean",
       label: "Ocean air and soft sand",
       sublabel: "Swimmable water, warm breeze, total ease",
-      icon: Waves,
+      icon: Palmtree,
     },
     {
       value: "rainforest",
