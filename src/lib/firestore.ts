@@ -1,5 +1,16 @@
 import { db } from "./firebase";
-import { collection, doc, setDoc, getDoc, getDocs, deleteDoc, query, where, orderBy, serverTimestamp } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  deleteDoc,
+  query,
+  where,
+  serverTimestamp,
+  writeBatch,
+} from "firebase/firestore";
 import type { TripInterpretation } from "@/types/interpretation";
 import type { SurveyAnswers } from "@/types/survey";
 import { normalizeTripInterpretation } from "@/lib/normalizeInterpretation";
@@ -78,6 +89,25 @@ export async function getUserTripSessions(userId: string): Promise<TripSession[]
 export async function deleteTripSession(sessionId: string): Promise<void> {
   const sessionRef = doc(db, "tripSessions", sessionId);
   await deleteDoc(sessionRef);
+}
+
+/**
+ * Deletes every trip session owned by the user (Firestore batches of 500).
+ * Requires rules that allow delete when `resource.data.userId == request.auth.uid`.
+ */
+export async function deleteAllTripSessionsForUser(userId: string): Promise<void> {
+  const sessionsRef = collection(db, "tripSessions");
+  const q = query(sessionsRef, where("userId", "==", userId));
+  const snapshot = await getDocs(q);
+  const docs = snapshot.docs;
+  const chunkSize = 500;
+  for (let i = 0; i < docs.length; i += chunkSize) {
+    const batch = writeBatch(db);
+    for (const d of docs.slice(i, i + chunkSize)) {
+      batch.delete(d.ref);
+    }
+    await batch.commit();
+  }
 }
 
 export function generateSessionId(): string {

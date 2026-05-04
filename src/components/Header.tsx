@@ -6,7 +6,7 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { signInWithGoogle, signOut } from "@/lib/auth";
 import { Button } from "./ui/Button";
-import { LogOut, ChevronDown, Plus, Share2, Check } from "lucide-react";
+import { LogOut, ChevronDown, Plus, Share2, Check, Settings } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import balloonImage from "@/lib/assets/balloon.png";
@@ -108,7 +108,7 @@ export function Header() {
                 </button>
 
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white/85 backdrop-blur-xl border border-white/30 rounded-lg shadow-lg py-1 z-[110]">
+                  <div className="absolute right-0 mt-2 w-52 bg-white/85 backdrop-blur-xl border border-white/30 rounded-lg shadow-lg py-1 z-[110]">
                     <Link
                       href="/"
                       className="block w-full px-4 py-2 text-left text-sm text-stone-700 hover:bg-stone-100 flex items-center gap-2"
@@ -144,6 +144,14 @@ export function Header() {
                       onClick={() => setDropdownOpen(false)}
                     >
                       My Trips
+                    </Link>
+                    <Link
+                      href="/settings"
+                      className="block w-full px-4 py-2 text-left text-sm text-stone-700 hover:bg-stone-100 flex items-center gap-2 border-t border-stone-200"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      <Settings className="w-4 h-4" />
+                      Settings
                     </Link>
                     <button
                       onClick={handleSignOut}
