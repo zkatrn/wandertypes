@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import balloonImage from "@/lib/assets/balloon.png";
+import { FullScreenLoadingContext } from "@/context/FullScreenLoadingContext";
 import { LOADING_SCREEN_FACTS } from "@/data/loadingScreenFacts";
 import styles from "./LoadingScreen.module.css";
 
@@ -80,6 +81,8 @@ export function LoadingScreen({
   relatedPhrases,
   children,
 }: LoadingScreenProps) {
+  const fullScreenLoading = useContext(FullScreenLoadingContext);
+
   const stepsKey =
     statusStepsProp?.join("\u0000") ?? "__default_loading_steps__";
   const steps =
@@ -108,6 +111,14 @@ export function LoadingScreen({
     setMounted(true);
     setStars(generateStars());
   }, []);
+
+  const registerFullScreen = fullScreenLoading?.begin;
+  const unregisterFullScreen = fullScreenLoading?.end;
+  useEffect(() => {
+    if (!registerFullScreen || !unregisterFullScreen) return;
+    registerFullScreen();
+    return () => unregisterFullScreen();
+  }, [registerFullScreen, unregisterFullScreen]);
 
   useEffect(() => {
     if (!mounted) return;

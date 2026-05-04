@@ -6,7 +6,7 @@ import { THEME_KEYS } from "@/lib/tripInterpretationAiSchema";
  * (normalized server-side into `TripInterpretation`).
  */
 export function buildInterpretTripUserPrompt(surveyAnswers: unknown): string {
-  return `You are the Trip Interpreter for iWanderz. You receive survey answers and return ONE JSON object only (no markdown, no commentary).
+  return `You are the Trip Interpreter for WanderMoodz. You receive survey answers and return ONE JSON object only (no markdown, no commentary).
 
 ## Input: survey answers
 ${JSON.stringify(surveyAnswers, null, 2)}

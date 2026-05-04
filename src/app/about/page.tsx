@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About iWanderz",
+  title: "About WanderMoodz",
   description:
     "A personalized travel decision assistant — survey-first, comparison-driven, emotionally intelligent.",
 };
@@ -22,7 +22,7 @@ export default function AboutPage() {
 
       <div className="relative z-10 mx-auto max-w-3xl px-6 pt-24 pb-28 md:pt-28 md:pb-32">
         <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-amber-200/90 mb-3">
-          iWanderz
+          WanderMoodz
         </p>
         <h1 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4 leading-tight">
           We help you figure out what kind of trip you actually want.

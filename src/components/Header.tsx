@@ -76,7 +76,7 @@ export function Header() {
           <Link href="/" className="flex items-center gap-2">
             <Image src={balloonImage} alt="LumiTrip" width={32} height={32} />
             <span className="text-lg font-serif font-bold text-primary">
-              iWanderz
+              WanderMoodz
             </span>
           </Link>
           <Link

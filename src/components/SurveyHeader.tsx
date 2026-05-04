@@ -63,12 +63,12 @@ export function SurveyHeader() {
       <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
         <Image
           src={balloonImage}
-          alt="iWanderz"
+          alt="WanderMoodz"
           width={32}
           height={32}
           priority
         />
-        <span className="text-lg font-serif font-bold text-primary">iWanderz</span>
+        <span className="text-lg font-serif font-bold text-primary">WanderMoodz</span>
       </Link>
 
       {/* Login on the right */}
