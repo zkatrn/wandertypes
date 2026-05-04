@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Settings",
-  description: "Account settings and data controls for VoyageBlitz.",
+  title: "Results",
+  description: "Your personalized destination comparison.",
 };
 
-export default function SettingsLayout({
+export default function ResultsLayout({
   children,
 }: {
   children: React.ReactNode;

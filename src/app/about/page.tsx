@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { buttonClassName } from "@/components/ui/buttonStyles";
 
 export const metadata: Metadata = {
-  title: "About VoyageBlitz",
+  title: "About",
   description:
     "A personalized travel decision assistant — survey-first, comparison-driven, emotionally intelligent.",
 };

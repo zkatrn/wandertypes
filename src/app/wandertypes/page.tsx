@@ -1,8 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
+import type { Metadata } from "next";
 import balloonImage from "@/lib/assets/balloon.png";
 import { WANDERTYPES, type WandertypeKey } from "@/lib/wanderType";
 import { Button } from "@/components/ui/Button";
+
+export const metadata: Metadata = {
+  title: "Wandertypes",
+  description: "Explore the seven travel personality types behind VoyageBlitz.",
+};
 
 const WANDERTYPE_ORDER: WandertypeKey[] = [
   "coastal_calm",
