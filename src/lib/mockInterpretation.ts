@@ -12,6 +12,7 @@ import {
   heuristicVerdictWatch,
 } from "@/lib/destinationHeuristics";
 import { listedPlaces, MAX_COMPARISON_CARDS } from "@/lib/comparisonCardPolicy";
+import { selectThemeFromSurveyAnswers } from "@/lib/themeFromSurvey";
 
 function userPickedDestinationList(answers: SurveyAnswers): string[] | null {
   if (answers.chooseForMe === true) return null;
@@ -23,7 +24,7 @@ function userPickedDestinationList(answers: SurveyAnswers): string[] | null {
 export function generateMockInterpretation(
   answers: SurveyAnswers
 ): TripInterpretation {
-  const selectedTheme = selectThemeFromAnswers(answers);
+  const selectedTheme = selectThemeFromSurveyAnswers(answers);
   const picked = userPickedDestinationList(answers);
   const comparisonCards =
     picked && picked.length > 0
@@ -287,12 +288,3 @@ function getDefaultDestinations(): DestinationComparisonCard[] {
     ];
 }
 
-function selectThemeFromAnswers(answers: SurveyAnswers) {
-  if (answers.environment === "ocean") return "coastal_calm";
-  if (answers.environment === "rainforest") return "rainforest_luxe";
-  if (answers.environment === "mountains") return "golden_adventure";
-  if (answers.environment === "culture" || answers.environment === "city_energy") return "city_spark";
-  if (answers.tripMood === "romantic") return "slow_romance";
-  if (answers.environment === "remote") return "wild_explorer";
-  return "coastal_calm";
-}

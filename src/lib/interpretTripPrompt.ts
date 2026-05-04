@@ -50,6 +50,19 @@ Return a JSON object with exactly these top-level keys:
 
 Do NOT include travelArchetype, archetypeDescription, or emotionalGoal — the server fills those from the official Wandertype for selectedTheme.
 
+## Theme selection (required — do not default to Nester from nature alone)
+\`selectedTheme\` must match **pace, frictionTolerance, tripMood, groupAlignment, groupType, and activities** — **not** \`environment\` alone. Several themes fit jungle, mountains, or “beautiful base” vibes.
+
+- **rainforest_luxe — "The Nester"** (property-first): Choose ONLY when the traveler clearly optimizes for an **exceptional home-base** (villa, lodge, standout rental) as a **central joy**, **slow or one-thing days**, and **low friction / comfort** on par with outings. Liking rainforest, waterfalls, or boutique stays is **not** enough by itself.
+
+- **golden_adventure — "The Seeker"** (adventure-forward): **Earned** outdoor experiences, **friction OK** (\`worth_it\` / packed days), **unforgettable** or **explore** mood, hiking / zipline / big nature days — optimize for **doing**, not for staying in.
+
+- **balanced_journey — "The Harmony Seeker"** (middle): **Both** real activities **and** comfort, **balanced** or **depends** pace, **comfortable_adventure**, **mixed group** or **different_priorities**, or when Nester vs Seeker signals **conflict or are moderate**. **Prefer this** over \`rainforest_luxe\` when you would otherwise pick Nester only because the environment is rainforest or nature-heavy.
+
+- **coastal_calm, city_spark, slow_romance, wild_explorer**: Use when their specific emotional/pacing profile clearly dominates (ocean reset, city spark, romance-first, max-out list collector).
+
+**Bias:** If rainforest / boutique / mountains-adjacent fits but Nester vs Seeker is ambiguous, choose **balanced_journey** over **rainforest_luxe**.
+
 ## Each comparisonCard object
 Required:
 - destinationName: string
