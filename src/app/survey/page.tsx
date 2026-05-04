@@ -14,6 +14,7 @@ import { Step5 } from "./steps/Step5";
 import { Step6 } from "./steps/Step6";
 import { Step7 } from "./steps/Step7";
 import { Step8 } from "./steps/Step8";
+import { trackEvent } from "@/lib/analytics";
 
 type SurveyStep = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
@@ -61,6 +62,7 @@ export default function SurveyPage() {
     } else {
       // Final step - trigger balloon animation then navigate
       setIsFinalAnimation(true);
+      void trackEvent("survey_complete");
       setTimeout(() => {
         router.push("/results");
       }, 1000);

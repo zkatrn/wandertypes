@@ -1,4 +1,7 @@
+"use client";
+
 import { auth } from "./firebase";
+import { trackEvent } from "./analytics";
 import {
   GoogleAuthProvider,
   signInWithPopup,
@@ -12,6 +15,7 @@ export async function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
   try {
     const result = await signInWithPopup(auth, provider);
+    void trackEvent("login", { method: "google" });
     return result.user;
   } catch (error) {
     console.error("Error signing in with Google:", error);

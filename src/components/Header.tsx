@@ -6,7 +6,8 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { signInWithGoogle, signOut } from "@/lib/auth";
 import { Button } from "./ui/Button";
-import { LogOut, ChevronDown, Plus, Share2, Check, Settings } from "lucide-react";
+import { LogOut, ChevronDown, Plus, Share2, Check, Settings, Shield } from "lucide-react";
+import { useAdminStatus } from "@/hooks/useAdminStatus";
 import Link from "next/link";
 import Image from "next/image";
 import balloonImage from "@/lib/assets/balloon.png";
@@ -20,6 +21,7 @@ export function Header() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isResultsPage = pathname?.startsWith('/results');
+  const { isAdmin } = useAdminStatus();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -145,6 +147,16 @@ export function Header() {
                     >
                       My Trips
                     </Link>
+                    {isAdmin === "yes" && (
+                      <Link
+                        href="/admin"
+                        className="block w-full px-4 py-2 text-left text-sm text-stone-700 hover:bg-stone-100 flex items-center gap-2 border-t border-stone-200"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <Shield className="w-4 h-4" />
+                        Admin
+                      </Link>
+                    )}
                     <Link
                       href="/settings"
                       className="block w-full px-4 py-2 text-left text-sm text-stone-700 hover:bg-stone-100 flex items-center gap-2 border-t border-stone-200"

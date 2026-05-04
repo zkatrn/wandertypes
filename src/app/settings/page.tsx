@@ -5,8 +5,12 @@ import { onAuthStateChanged, type User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { AuthGate } from "@/components/AuthGate";
 import { AccountDeletionCard } from "@/components/settings/AccountDeletionCard";
+import { useAdminStatus } from "@/hooks/useAdminStatus";
+import Link from "next/link";
+import { Shield } from "lucide-react";
 
 export default function SettingsPage() {
+  const { isAdmin } = useAdminStatus();
   const [account, setAccount] = useState<User | null>(() => auth.currentUser);
 
   useEffect(() => {
@@ -44,6 +48,23 @@ export default function SettingsPage() {
                   "your Google account"}
               </span>
             </p>
+
+            {isAdmin === "yes" ? (
+              <section className="mb-8 rounded-xl border border-stone-200 bg-white p-6 shadow-sm">
+                <h2 className="text-lg font-semibold text-stone-900">Admin</h2>
+                <p className="mt-2 text-sm text-stone-600 leading-relaxed">
+                  Open the admin dashboard to view analytics counts, manage users, and
+                  remove trip sessions.
+                </p>
+                <Link
+                  href="/admin"
+                  className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+                >
+                  <Shield className="h-4 w-4" />
+                  Admin dashboard
+                </Link>
+              </section>
+            ) : null}
 
             <AccountDeletionCard />
           </div>

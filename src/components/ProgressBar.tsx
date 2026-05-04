@@ -116,7 +116,7 @@ export function ProgressBar({ current, total, maxStepReached, onStepClick, isFin
         
         {/* Balloon floating on top - follows current position */}
         <div
-          className={`${styles.balloon} ${isFinalAnimation ? styles.flyToUser : ''}`}
+          className={`${styles.balloon} ${isFinalAnimation ? styles.flyOffRight : ''}`}
           style={!isFinalAnimation ? { 
             left: `${balloonPercentage}%`, 
             top: '-30px',

@@ -4,8 +4,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { getUserTripSessions, deleteTripSession, type TripSession } from "@/lib/firestore";
+import {
+  getUserTripSessions,
+  deleteTripSession,
+  deleteAllTripSessionsForUser,
+  type TripSession,
+} from "@/lib/firestore";
 import { getTheme } from "@/lib/themes";
+import { getTripListTitle } from "@/lib/tripListTitle";
 import { Button } from "@/components/ui/Button";
 import { SimplePageLoader } from "@/components/loading/SimplePageLoader";
 import { Calendar, MapPin, Trash2 } from "lucide-react";
@@ -15,6 +21,7 @@ export default function TripsPage() {
   const [trips, setTrips] = useState<TripSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [deletingAll, setDeletingAll] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -87,6 +94,32 @@ export default function TripsPage() {
     }
   };
 
+  const handleDeleteAll = async () => {
+    const user = auth.currentUser;
+    if (!user || trips.length === 0) return;
+
+    if (
+      !confirm(
+        `Delete all ${trips.length} saved trip${trips.length === 1 ? "" : "s"}? This cannot be undone.`
+      )
+    ) {
+      return;
+    }
+
+    setDeletingAll(true);
+    try {
+      await deleteAllTripSessionsForUser(user.uid);
+      setTrips([]);
+    } catch (error) {
+      console.error("Failed to delete all trips:", error);
+      alert(
+        "Could not delete all trips. If this persists, check your connection and Firestore rules."
+      );
+    } finally {
+      setDeletingAll(false);
+    }
+  };
+
   if (loading) {
     return (
       <SimplePageLoader message="Loading your trips…" />
@@ -125,6 +158,7 @@ export default function TripsPage() {
             </Button>
           </div>
         ) : (
+          <>
           <div className="grid gap-6">
             {trips.map((trip) => (
               <div
@@ -134,8 +168,8 @@ export default function TripsPage() {
               >
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-2xl font-bold text-mountain-brown mb-2">
-                      {trip.interpretation.travelArchetype}
+                    <h3 className="text-2xl font-bold text-mountain-brown mb-2 line-clamp-3">
+                      {getTripListTitle(trip)}
                     </h3>
                     <div className="flex items-center gap-2 text-stone-600 text-sm">
                       <Calendar className="w-4 h-4" />
@@ -150,7 +184,7 @@ export default function TripsPage() {
                     </div>
                     <button
                       onClick={(e) => handleDelete(e, trip.id)}
-                      disabled={deleting === trip.id}
+                      disabled={deleting === trip.id || deletingAll}
                       className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                       aria-label="Delete trip"
                     >
@@ -181,6 +215,27 @@ export default function TripsPage() {
               </div>
             ))}
           </div>
+
+            <section className="mt-12 border-t border-stone-200 pt-10">
+              <h2 className="text-lg font-semibold text-stone-900">
+                Delete all saved trips
+              </h2>
+              <p className="mt-2 text-sm text-stone-600 leading-relaxed">
+                Permanently remove every saved comparison from your account. Your Google
+                sign-in is unchanged.
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="mt-4 border-red-300 text-red-800 hover:bg-red-50 hover:border-red-400"
+                disabled={deletingAll || deleting !== null}
+                onClick={() => void handleDeleteAll()}
+              >
+                {deletingAll ? "Deleting…" : "Delete all my trips"}
+              </Button>
+            </section>
+          </>
         )}
       </div>
       </div>

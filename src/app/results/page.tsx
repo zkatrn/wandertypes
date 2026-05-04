@@ -19,6 +19,7 @@ import type { TripInterpretation } from "@/types/interpretation";
 import { fetchTripInterpretation } from "@/lib/fetchTripInterpretation";
 import type { TripInterpretationSource } from "@/lib/fetchTripInterpretation";
 import { Button } from "@/components/ui/Button";
+import { trackEvent } from "@/lib/analytics";
 
 export default function ResultsPage() {
   const router = useRouter();
@@ -36,6 +37,7 @@ export default function ResultsPage() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const pendingRef = useRef<"save" | "share" | null>(null);
   const savedIdRef = useRef<string | null>(null);
+  const interpretationTrackedRef = useRef(false);
 
   const travelFactHints = useMemo(() => {
     const a = loadSurveyAnswers();
@@ -98,6 +100,14 @@ export default function ResultsPage() {
     };
   }, [router, retryKey]);
 
+  useEffect(() => {
+    if (!interpretation || interpretationTrackedRef.current) return;
+    interpretationTrackedRef.current = true;
+    void trackEvent("interpretation_view", {
+      source: interpretationSource ?? "unknown",
+    });
+  }, [interpretation, interpretationSource]);
+
   const persistCurrentResults = useCallback(async (): Promise<string> => {
     if (!interpretation) {
       throw new Error("No interpretation");
@@ -116,6 +126,7 @@ export default function ResultsPage() {
     }
     const id = generateSessionId();
     await saveTripSession(id, answers, interpretation, u.uid);
+    void trackEvent("trip_saved", { session_id: id });
     savedIdRef.current = id;
     setSavedSessionId(id);
     router.replace(`/results/${id}`);

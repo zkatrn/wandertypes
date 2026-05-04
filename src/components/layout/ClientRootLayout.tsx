@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { usePathname } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -8,6 +9,7 @@ import {
   useFullScreenLoading,
 } from "@/context/FullScreenLoadingContext";
 import { LandingParallaxDecor } from "@/components/landing/LandingParallaxDecor";
+import { AnalyticsInit } from "@/components/layout/AnalyticsInit";
 
 function RootLayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -63,6 +65,9 @@ export function ClientRootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <FullScreenLoadingProvider>
+      <Suspense fallback={null}>
+        <AnalyticsInit />
+      </Suspense>
       <RootLayoutShell>{children}</RootLayoutShell>
     </FullScreenLoadingProvider>
   );
