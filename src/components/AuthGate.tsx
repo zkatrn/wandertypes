@@ -5,7 +5,7 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { signInWithGoogle } from "@/lib/auth";
 import { Button } from "./ui/Button";
-import { LoadingTravelFact } from "./LoadingTravelFact";
+import { LoadingScreen } from "@/components/loading/LoadingScreen";
 import { Sparkles, Lock } from "lucide-react";
 
 type AuthGateProps = {
@@ -35,26 +35,10 @@ export function AuthGate({ children }: AuthGateProps) {
 
   if (loading) {
     return (
-      <>
-        {/* Background image */}
-        <div
-          className="fixed inset-0 z-0 bg-app-photo-backdrop"
-          style={{
-            backgroundImage: "url(/bg.png)",
-            backgroundAttachment: "fixed",
-            filter: "saturate(0.5) brightness(1.05)",
-          }}
-        />
-        <div className="fixed inset-0 z-0 bg-white/25" />
-
-        <div className="relative z-10 min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin w-12 h-12 border-4 border-stone-900 border-t-transparent rounded-full mx-auto mb-4" />
-            <p className="text-stone-600">Loading...</p>
-            <LoadingTravelFact className="mt-8 text-stone-600/95" />
-          </div>
-        </div>
-      </>
+      <LoadingScreen
+        statusSteps={["Checking your session..."]}
+        brandLabel="LumiTrip"
+      />
     );
   }
 

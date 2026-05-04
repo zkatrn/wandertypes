@@ -42,7 +42,7 @@ export function Step5({ selected, onSelect, onNext, onBack }: Step5Props) {
     <div className="text-center">
       <SurveyStepHeader
         icon={<Compass className="w-12 h-12 text-orange-500 mx-auto" />}
-        title="Which of these would make the trip feel worth it?"
+        title="What else makes the trip complete?"
         description="Pick as many as apply. More is fine — we'll find what fits."
       />
 

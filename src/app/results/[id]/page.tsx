@@ -11,7 +11,7 @@ import { TwinklingStars } from "@/components/results/TwinklingStars";
 import { comparisonGridClassName } from "@/lib/resultsLayout";
 import type { TripInterpretation } from "@/types/interpretation";
 import { AlertCircle } from "lucide-react";
-import { LoadingTravelFact } from "@/components/LoadingTravelFact";
+import { LoadingScreen } from "@/components/loading/LoadingScreen";
 import { loadSurveyAnswers } from "@/lib/surveyStorage";
 
 export default function SharedResultsPage() {
@@ -60,16 +60,10 @@ export default function SharedResultsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-900 via-indigo-800 to-blue-900">
-        <div className="text-center">
-          <div className="animate-spin w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full mx-auto mb-4" />
-          <p className="text-stone-200">Loading your travel comparison...</p>
-          <LoadingTravelFact
-            relatedPhrases={travelFactHints}
-            className="mt-8 text-stone-300/95"
-          />
-        </div>
-      </div>
+      <LoadingScreen
+        relatedPhrases={travelFactHints}
+        statusSteps={["Loading your travel comparison..."]}
+      />
     );
   }
 

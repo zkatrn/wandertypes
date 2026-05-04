@@ -79,7 +79,7 @@ export function Step1({
 
       <div className="max-w-xl mx-auto mb-8 text-center">
         <p className="text-sm font-medium text-primary uppercase tracking-wide mb-2">
-          Trip length
+          Trip length <span className="font-normal normal-case text-stone-500">(required)</span>
         </p>
         <div className="flex flex-wrap gap-2">
           {TRIP_LENGTH_OPTIONS.map((opt) => {
@@ -100,6 +100,11 @@ export function Step1({
             );
           })}
         </div>
+        {tripLengthNights === undefined ? (
+          <p className="text-xs text-stone-500 mt-2">
+            Choose roughly how long you are planning to travel — you need this and a mood below to continue.
+          </p>
+        ) : null}
       </div>
 
       <div className="grid gap-3 mb-8">
@@ -137,7 +142,7 @@ export function Step1({
       <SurveyFooter
         onNext={onNext}
         onBack={onBack}
-        nextDisabled={!selected}
+        nextDisabled={!selected || tripLengthNights === undefined}
         showBack={true}
       />
     </div>

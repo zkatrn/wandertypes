@@ -34,7 +34,7 @@ export default function WanderTypesPage() {
             <div className="flex justify-center gap-2 items-center mb-4">
               <Image src={balloonImage} alt="" width={28} height={28} />
               <span className="text-[10px] uppercase tracking-[0.2em] text-stone-500 font-medium">
-                WanderMoodz
+                iWanderz
               </span>
             </div>
             <h1 className="text-4xl sm:text-5xl font-serif font-bold text-primary mb-4 tracking-tight">
@@ -154,7 +154,7 @@ export default function WanderTypesPage() {
           </section>
 
           <p className="text-center mt-12 text-xs text-stone-500 italic tracking-wide">
-            WanderMoodz · Your trip, matched to you 🎈
+            iWanderz · Your trip, matched to you 🎈
           </p>
         </div>
       </div>

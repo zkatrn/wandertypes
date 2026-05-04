@@ -8,7 +8,7 @@ import { loadSurveyAnswers } from "@/lib/surveyStorage";
 import { saveTripSession, generateSessionId } from "@/lib/firestore";
 import { getTheme } from "@/lib/themes";
 import { AuthGate } from "@/components/AuthGate";
-import { LoadingTravelFact } from "@/components/LoadingTravelFact";
+import { LoadingScreen } from "@/components/loading/LoadingScreen";
 import { WandertypeBanner } from "@/components/results/WandertypeBanner";
 import { DestinationCard } from "@/components/results/DestinationCard";
 import { ResultsInsightsAccordions } from "@/components/results/ResultsInsightsAccordions";
@@ -109,40 +109,30 @@ export default function ResultsPage() {
   if (!interpretation) {
     return (
       <AuthGate>
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-900 via-indigo-800 to-blue-900 px-6">
-          <div className="text-center max-w-md">
-            {loadError ? (
-              <>
-                <p className="text-red-200 text-sm mb-4 leading-relaxed">{loadError}</p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setLoadError(null);
-                    setRetryKey((k) => k + 1);
-                  }}
-                  className="text-sm px-4 py-2 rounded-lg bg-amber-400 text-stone-900 font-medium hover:bg-amber-300"
-                >
-                  Try again
-                </button>
-                <p className="text-stone-400 text-xs mt-4">
-                  If this keeps happening, open the browser console and check the
-                  Network tab for <code className="text-stone-300">/api/interpret-trip</code>.
-                </p>
-              </>
-            ) : (
-              <>
-                <div className="animate-spin w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full mx-auto mb-4" />
-                <p className="text-stone-200">
-                  Generating your personalized comparison...
-                </p>
-                <LoadingTravelFact
-                  relatedPhrases={travelFactHints}
-                  className="mt-8 text-stone-300/95"
-                />
-              </>
-            )}
-          </div>
-        </div>
+        {loadError ? (
+          <LoadingScreen relatedPhrases={travelFactHints}>
+            <div className="w-full max-w-md mx-auto mb-8 text-center px-2">
+              <p className="text-red-200 text-sm mb-4 leading-relaxed">{loadError}</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setLoadError(null);
+                  setRetryKey((k) => k + 1);
+                }}
+                className="text-sm px-4 py-2 rounded-lg bg-amber-400 text-stone-900 font-medium hover:bg-amber-300"
+              >
+                Try again
+              </button>
+              <p className="text-stone-400 text-xs mt-4">
+                If this keeps happening, open the browser console and check the
+                Network tab for{" "}
+                <code className="text-stone-300">/api/interpret-trip</code>.
+              </p>
+            </div>
+          </LoadingScreen>
+        ) : (
+          <LoadingScreen relatedPhrases={travelFactHints} />
+        )}
       </AuthGate>
     );
   }

@@ -7,7 +7,7 @@ import { auth } from "@/lib/firebase";
 import { getUserTripSessions, deleteTripSession, type TripSession } from "@/lib/firestore";
 import { getTheme } from "@/lib/themes";
 import { Button } from "@/components/ui/Button";
-import { LoadingTravelFact } from "@/components/LoadingTravelFact";
+import { LoadingScreen } from "@/components/loading/LoadingScreen";
 import { Calendar, MapPin, Trash2 } from "lucide-react";
 
 export default function TripsPage() {
@@ -57,26 +57,10 @@ export default function TripsPage() {
 
   if (loading) {
     return (
-      <>
-        {/* Background image */}
-        <div
-          className="fixed inset-0 z-0 bg-app-photo-backdrop"
-          style={{
-            backgroundImage: "url(/bg.png)",
-            backgroundAttachment: "fixed",
-            filter: "saturate(0.5) brightness(1.05)",
-          }}
-        />
-        <div className="fixed inset-0 z-0 bg-white/25" />
-
-        <div className="relative z-10 min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin w-12 h-12 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
-            <p className="text-stone-600">Loading your trips...</p>
-            <LoadingTravelFact className="mt-8 text-stone-600/95" />
-          </div>
-        </div>
-      </>
+      <LoadingScreen
+        statusSteps={["Loading your trips..."]}
+        brandLabel="LumiTrip"
+      />
     );
   }
 
