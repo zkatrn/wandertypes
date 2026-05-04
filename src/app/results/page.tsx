@@ -20,6 +20,7 @@ import { fetchTripInterpretation } from "@/lib/fetchTripInterpretation";
 import type { TripInterpretationSource } from "@/lib/fetchTripInterpretation";
 import { Button } from "@/components/ui/Button";
 import { trackEvent } from "@/lib/analytics";
+import { SeamlessParallaxBackground } from "@/components/layout/SeamlessParallaxBackground";
 import { getResultsDestinationTitle } from "@/lib/tripListTitle";
 
 export default function ResultsPage() {
@@ -243,14 +244,11 @@ export default function ResultsPage() {
         description="Sign in with Google to save this comparison to your account or copy a share link."
       />
 
-      <div
-        className="pointer-events-none fixed inset-0 z-0 bg-app-photo-backdrop bg-parallax"
-        style={{
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundAttachment: "scroll",
-          filter: "opacity(0.5) saturate(0.5) brightness(1.15)",
-        }}
-        aria-hidden
+      <SeamlessParallaxBackground
+        imageUrl={backgroundImage}
+        durationSec={150}
+        imageFilter="opacity(0.5) saturate(0.5) brightness(1.15)"
+        wrapperClassName="fixed inset-0 z-0"
       />
 
       <div className="relative z-10 min-h-screen text-stone-900">

@@ -36,64 +36,23 @@ body {
   background-size: auto 118%;
 }
 
-/* Mock parallax — horizontal drift only; shares repeat/size rules with backdrop */
-@keyframes parallaxPan {
-  0% {
-    background-position: 0% center;
+/*
+ * Infinite horizontal drift — one direction, seamless loop (dual-panel translate).
+ * Used by SeamlessParallaxBackground; duration via --seamless-parallax-duration.
+ */
+@keyframes seamlessParallaxDrift {
+  from {
+    transform: translate3d(0, 0, 0);
   }
-  100% {
-    background-position: 100% center;
-  }
-}
-
-.bg-parallax {
-  animation: parallaxPan 324s linear infinite alternate;
-}
-
-.bg-app-photo-backdrop.bg-parallax {
-  background-size: auto 112%;
-}
-
-@media (min-width: 480px) {
-  .bg-app-photo-backdrop.bg-parallax {
-    animation-duration: 270s;
-    background-size: auto 114%;
+  to {
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
-@media (min-width: 640px) {
-  .bg-app-photo-backdrop.bg-parallax {
-    animation-duration: 216s;
-    background-size: auto 116%;
-  }
-}
-
-@media (min-width: 768px) {
-  .bg-app-photo-backdrop.bg-parallax {
-    animation-duration: 178s;
-    background-size: auto 118%;
-  }
-}
-
-@media (min-width: 1024px) {
-  .bg-app-photo-backdrop.bg-parallax {
-    animation-duration: 146s;
-    background-size: auto 120%;
-  }
-}
-
-@media (min-width: 1280px) {
-  .bg-app-photo-backdrop.bg-parallax {
-    animation-duration: 122s;
-    background-size: auto 122%;
-  }
-}
-
-@media (min-width: 1536px) {
-  .bg-app-photo-backdrop.bg-parallax {
-    animation-duration: 97s;
-    background-size: auto 124%;
-  }
+.seamless-parallax-track {
+  animation: seamlessParallaxDrift var(--seamless-parallax-duration, 150s)
+    linear infinite;
+  will-change: transform;
 }
 
 /*
@@ -109,16 +68,16 @@ body {
     background-attachment: scroll !important;
   }
 
-  .bg-app-photo-backdrop.bg-parallax {
+  .seamless-parallax-track {
     animation: none;
-    background-size: cover;
+    transform: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bg-parallax {
+  .seamless-parallax-track {
     animation: none;
-    background-position: center center;
+    transform: none;
   }
 }
 
@@ -197,13 +156,14 @@ body {
   overflow: hidden;
 }
 
+/* One emoji per layer; motion uses vw so clouds enter fully off the right edge */
 .lpd-cloud {
   position: absolute;
-  left: -50%;
-  width: 200%;
+  left: 0;
   opacity: 0;
   font-size: clamp(48px, 8vw, 88px);
-  text-align: left;
+  line-height: 1;
+  white-space: nowrap;
   filter: drop-shadow(0 4px 20px rgba(8, 11, 40, 0.25));
   animation: lpdCloudDrift var(--cd, 20s) linear infinite;
   animation-delay: var(--cdelay, 0s);
@@ -211,7 +171,7 @@ body {
 
 @keyframes lpdCloudDrift {
   0% {
-    transform: translateX(-40%);
+    transform: translateX(calc(100vw + 72px));
     opacity: 0;
   }
   10% {
@@ -221,7 +181,7 @@ body {
     opacity: 0.42;
   }
   100% {
-    transform: translateX(40%);
+    transform: translateX(-96px);
     opacity: 0;
   }
 }

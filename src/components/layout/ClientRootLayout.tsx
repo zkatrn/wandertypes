@@ -10,6 +10,7 @@ import {
 } from "@/context/FullScreenLoadingContext";
 import { LandingParallaxDecor } from "@/components/landing/LandingParallaxDecor";
 import { AnalyticsInit } from "@/components/layout/AnalyticsInit";
+import { SeamlessParallaxBackground } from "@/components/layout/SeamlessParallaxBackground";
 
 function RootLayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -25,13 +26,11 @@ function RootLayoutShell({ children }: { children: React.ReactNode }) {
         <>
           {isLandingPage ? (
             <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-              <div
-                className="absolute max-md:inset-0 md:top-0 md:bottom-0 md:left-[-25%] md:h-full md:w-[150%] md:min-w-[1800px] bg-app-photo-backdrop bg-parallax"
-                style={{
-                  backgroundImage: "url(/bg.png)",
-                  backgroundAttachment: "scroll",
-                  filter: "saturate(0.5) brightness(1.05)",
-                }}
+              <SeamlessParallaxBackground
+                imageUrl="/bg.png"
+                durationSec={150}
+                imageFilter="saturate(0.5) brightness(1.05)"
+                wrapperClassName="absolute inset-0"
               />
             </div>
           ) : (

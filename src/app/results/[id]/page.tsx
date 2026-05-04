@@ -17,6 +17,7 @@ import type { TripInterpretation } from "@/types/interpretation";
 import { AlertCircle } from "lucide-react";
 import { SimplePageLoader } from "@/components/loading/SimplePageLoader";
 import { getResultsDestinationTitle } from "@/lib/tripListTitle";
+import { SeamlessParallaxBackground } from "@/components/layout/SeamlessParallaxBackground";
 
 export default function SharedResultsPage() {
   const params = useParams();
@@ -138,14 +139,11 @@ export default function SharedResultsPage() {
         description="Sign in with Google to copy a link to this comparison."
       />
 
-      <div
-        className="pointer-events-none fixed inset-0 z-0 bg-app-photo-backdrop bg-parallax"
-        style={{
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundAttachment: "scroll",
-          filter: "opacity(0.5) saturate(0.5) brightness(1.15)",
-        }}
-        aria-hidden
+      <SeamlessParallaxBackground
+        imageUrl={backgroundImage}
+        durationSec={150}
+        imageFilter="opacity(0.5) saturate(0.5) brightness(1.15)"
+        wrapperClassName="fixed inset-0 z-0"
       />
 
       <div className="relative z-10 min-h-screen text-stone-900">
