@@ -1,8 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { buttonClassName } from "@/components/ui/buttonStyles";
 
 export const metadata: Metadata = {
-  title: "About WanderMoodz",
+  title: "About VoyageBlitz",
   description:
     "A personalized travel decision assistant — survey-first, comparison-driven, emotionally intelligent.",
 };
@@ -22,7 +23,7 @@ export default function AboutPage() {
 
       <div className="relative z-10 mx-auto max-w-3xl px-6 pt-24 pb-28 md:pt-28 md:pb-32">
         <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-amber-200/90 mb-3">
-          WanderMoodz
+          VoyageBlitz
         </p>
         <h1 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4 leading-tight">
           We help you figure out what kind of trip you actually want.
@@ -70,13 +71,21 @@ export default function AboutPage() {
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Link
               href="/survey"
-              className="inline-flex justify-center rounded-xl bg-amber-400 px-5 py-3 text-sm font-semibold text-stone-900 shadow hover:bg-amber-300 transition-colors"
+              className={buttonClassName(
+                "primary",
+                "md",
+                "w-full justify-center sm:w-auto",
+              )}
             >
               Start the survey
             </Link>
             <Link
               href="/"
-              className="inline-flex justify-center rounded-xl border border-white/40 bg-white/10 px-5 py-3 text-sm font-semibold text-white hover:bg-white/15 transition-colors"
+              className={buttonClassName(
+                "outlineDark",
+                "md",
+                "w-full justify-center sm:w-auto",
+              )}
             >
               Back to home
             </Link>

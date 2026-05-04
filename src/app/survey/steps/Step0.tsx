@@ -13,11 +13,21 @@ type Step0Props = {
   destinationList?: string[];
   onUpdate: (hasDestinations: boolean, destinations: string[]) => void;
   onNext: () => void;
+  /**
+   * When true (home hero), destinations + actions sit in a frosted navy card
+   * like `homepage_v4.html` `.location-block`, with dashed “add” control.
+   */
+  darkHeroCard?: boolean;
 };
 
-export function Step0({ destinationList, onUpdate, onNext }: Step0Props) {
+export function Step0({
+  destinationList,
+  onUpdate,
+  onNext,
+  darkHeroCard = false,
+}: Step0Props) {
   const [inputs, setInputs] = useState<string[]>(
-    destinationList && destinationList.length > 0 ? destinationList : [""]
+    destinationList && destinationList.length > 0 ? destinationList : [""],
   );
 
   const handleChooseForMe = () => {
@@ -49,14 +59,135 @@ export function Step0({ destinationList, onUpdate, onNext }: Step0Props) {
   };
 
   const handleContinue = () => {
-    const filledDestinations = inputs.filter(input => input.trim().length > 0);
+    const filledDestinations = inputs.filter(
+      (input) => input.trim().length > 0,
+    );
     if (filledDestinations.length > 0) {
       onUpdate(true, filledDestinations);
-      onNext();
+    } else {
+      onUpdate(false, []);
     }
+    onNext();
   };
 
-  const filledCount = inputs.filter(input => input.trim().length > 0).length;
+  const inputClassDefault =
+    "flex-1 rounded-lg border-2 border-stone-200 bg-white px-4 py-3 text-stone-900 focus:border-blue-300 focus:outline-none";
+  const inputClassDark =
+    "flex-1 rounded-[10px] border border-primary-light/35 bg-white/[0.09] px-4 py-2.5 font-serif text-sm text-stone-50 placeholder:text-slate-300/75 focus:border-amber-300/55 focus:outline-none";
+
+  const formBlock = (
+    <>
+      <div className={darkHeroCard ? "space-y-2.5" : "mb-2 space-y-3"}>
+        {inputs.map((input, index) => (
+          <div key={index} className="relative">
+            <div className="flex items-center gap-2.5">
+              <LocationAutocomplete
+                value={input}
+                onChange={(value) => handleInputChange(index, value)}
+                onPlaceSelected={(placeName) =>
+                  handlePlaceSelected(index, placeName)
+                }
+                placeholder={
+                  index === 0
+                    ? "Enter a destination (optional)"
+                    : `Destination ${index + 1} (optional)`
+                }
+                className={darkHeroCard ? inputClassDark : inputClassDefault}
+                onEnter={handleContinue}
+              />
+              {inputs.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeDestinationField(index)}
+                  className={
+                    darkHeroCard
+                      ? "flex h-10 w-10 shrink-0 items-center justify-center text-stone-300/80 transition hover:text-amber-200"
+                      : "flex h-11 w-11 shrink-0 items-center justify-center text-stone-400 transition hover:text-red-600"
+                  }
+                  aria-label="Remove destination"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {inputs.length < 4 && (
+        <button
+          type="button"
+          onClick={addDestinationField}
+          className={
+            darkHeroCard
+              ? "p-2 mt-2 w-full rounded-[10px] border border-dashed border-primary-light/45 bg-transparent py-2.5 text-left font-serif text-xs tracking-wide text-stone-200 transition hover:border-primary-light/65 hover:text-white"
+              : "p-2 mb-2 flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-dark"
+          }
+        >
+          {darkHeroCard ? (
+            "+ Add another destination"
+          ) : (
+            <>
+              <Plus className="h-4 w-4" />
+              Add another
+            </>
+          )}
+        </button>
+      )}
+
+
+{darkHeroCard ? (
+          <Button
+            type="button"
+            variant="ctaWarm"
+            onClick={handleContinue}
+            className="mt-4 w-full rounded-xl py-3.5 font-serif text-[15px] font-bold tracking-wide"
+          >
+            Continue
+          </Button>
+        ) : (
+          <Button onClick={handleContinue} className="w-64">
+            Continue
+          </Button>
+        )}
+
+      {darkHeroCard && (
+        <div
+          className="my-3 flex items-center gap-3"
+          aria-hidden
+        >
+          <div className="h-px flex-1 bg-primary-light/30" />
+          <span className="font-serif text-[11px] italic tracking-wide text-stone-300">
+            or
+          </span>
+          <div className="h-px flex-1 bg-primary-light/30" />
+        </div>
+      )}
+
+      <div
+        className={
+          darkHeroCard
+            ? "flex flex-col items-stretch gap-3"
+            : "flex flex-col items-center gap-4"
+        }
+      >
+        {darkHeroCard ? (
+          <Button
+            type="button"
+            variant="outlineNavy"
+            onClick={handleChooseForMe}
+            className="w-full rounded-[10px] border-dashed py-2.5 font-serif text-sm font-medium tracking-wide"
+          >
+            ✨ Choose for me
+          </Button>
+        ) : (
+          <Button onClick={handleChooseForMe} variant="outline" className="w-64">
+            ✨ Choose for me
+          </Button>
+        )}
+      </div>
+    </>
+  );
 
   return (
     <div className="text-center">
@@ -76,60 +207,18 @@ export function Step0({ destinationList, onUpdate, onNext }: Step0Props) {
         title="Where are you thinking of going?"
         description="Add up to 4 destinations to compare"
         showIcon
+        toneOnPhoto={darkHeroCard}
       />
 
-      <div className="max-w-md mx-auto mb-8">
-        <div className="space-y-3 mb-2">
-          {inputs.map((input, index) => (
-            <div key={index} className="relative">
-              <div className="flex gap-2">
-                <LocationAutocomplete
-                  value={input}
-                  onChange={(value) => handleInputChange(index, value)}
-                  onPlaceSelected={(placeName) => handlePlaceSelected(index, placeName)}
-                  placeholder={index === 0 ? "Enter a destination (optional)" : `Destination ${index + 1} (optional)`}
-                  className="flex-1 px-4 py-3 border-2 border-stone-200 rounded-lg focus:outline-none focus:border-blue-300 bg-white text-stone-900"
-                  onEnter={handleContinue}
-                />
-                {inputs.length > 1 && (
-                  <button
-                    onClick={() => removeDestinationField(index)}
-                    className="flex items-center justify-center w-11 h-11 text-stone-400 hover:text-red-600 transition-colors"
-                    aria-label="Remove destination"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
+      {darkHeroCard ? (
+        <div className="mx-auto mt-2 max-w-[600px] text-left">
+          <div className="rounded-[20px] bg-landing-navy-wash-hero px-7 pb-6 pt-7 shadow-[0_24px_48px_rgba(0,0,0,0.4)] backdrop-blur-md">
+            {formBlock}
+          </div>
         </div>
-
-        {inputs.length < 4 && (
-          <button
-            onClick={addDestinationField}
-            className="flex items-center gap-1 text-primary hover:text-primary-dark text-sm font-medium mb-2 mx-auto"
-          >
-            <Plus className="w-4 h-4" />
-            Add another
-          </button>
-        )}
-
-        <p className="text-stone-500 text-sm mb-6">
-          Not sure yet? That's okay — just tell us what kind of trip you want and we'll find the match.
-        </p>
-
-        <div className="flex flex-col gap-4 items-center">
-          {filledCount > 0 && (
-            <Button onClick={handleContinue} className="w-64">
-              Continue
-            </Button>
-          )}
-          <Button onClick={handleChooseForMe} variant="outline" className="w-64">
-            ✨ Choose for me
-          </Button>
-        </div>
-      </div>
+      ) : (
+        <div className="mx-auto mb-8 max-w-md">{formBlock}</div>
+      )}
     </div>
   );
 }

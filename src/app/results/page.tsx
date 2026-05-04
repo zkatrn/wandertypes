@@ -17,6 +17,7 @@ import { comparisonGridClassName } from "@/lib/resultsLayout";
 import type { TripInterpretation } from "@/types/interpretation";
 import { fetchTripInterpretation } from "@/lib/fetchTripInterpretation";
 import type { TripInterpretationSource } from "@/lib/fetchTripInterpretation";
+import { Button } from "@/components/ui/Button";
 
 export default function ResultsPage() {
   const router = useRouter();
@@ -113,16 +114,16 @@ export default function ResultsPage() {
           <LoadingScreen relatedPhrases={travelFactHints}>
             <div className="w-full max-w-md mx-auto mb-8 text-center px-2">
               <p className="text-red-200 text-sm mb-4 leading-relaxed">{loadError}</p>
-              <button
+              <Button
                 type="button"
+                size="sm"
                 onClick={() => {
                   setLoadError(null);
                   setRetryKey((k) => k + 1);
                 }}
-                className="text-sm px-4 py-2 rounded-lg bg-amber-400 text-stone-900 font-medium hover:bg-amber-300"
               >
                 Try again
-              </button>
+              </Button>
               <p className="text-stone-400 text-xs mt-4">
                 If this keeps happening, open the browser console and check the
                 Network tab for{" "}

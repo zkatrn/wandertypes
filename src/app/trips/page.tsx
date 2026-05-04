@@ -142,7 +142,7 @@ export default function TripsPage() {
                   {trip.interpretation.comparisonCards.slice(0, 3).map((card) => (
                     <span
                       key={card.destinationName}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-secondary border border-primary/30 text-mountain-brown rounded-full text-sm"
+                      className="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-sm text-primary"
                     >
                       <MapPin className="w-3 h-3" />
                       {card.destinationName}

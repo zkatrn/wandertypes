@@ -47,7 +47,7 @@ body {
 }
 
 .bg-parallax {
-  animation: parallaxPan 90s linear infinite alternate;
+  animation: parallaxPan 324s linear infinite alternate;
 }
 
 .bg-app-photo-backdrop.bg-parallax {
@@ -56,42 +56,42 @@ body {
 
 @media (min-width: 480px) {
   .bg-app-photo-backdrop.bg-parallax {
-    animation-duration: 72s;
+    animation-duration: 270s;
     background-size: auto 114%;
   }
 }
 
 @media (min-width: 640px) {
   .bg-app-photo-backdrop.bg-parallax {
-    animation-duration: 58s;
+    animation-duration: 216s;
     background-size: auto 116%;
   }
 }
 
 @media (min-width: 768px) {
   .bg-app-photo-backdrop.bg-parallax {
-    animation-duration: 48s;
+    animation-duration: 178s;
     background-size: auto 118%;
   }
 }
 
 @media (min-width: 1024px) {
   .bg-app-photo-backdrop.bg-parallax {
-    animation-duration: 38s;
+    animation-duration: 146s;
     background-size: auto 120%;
   }
 }
 
 @media (min-width: 1280px) {
   .bg-app-photo-backdrop.bg-parallax {
-    animation-duration: 32s;
+    animation-duration: 122s;
     background-size: auto 122%;
   }
 }
 
 @media (min-width: 1536px) {
   .bg-app-photo-backdrop.bg-parallax {
-    animation-duration: 26s;
+    animation-duration: 97s;
     background-size: auto 124%;
   }
 }
@@ -117,4 +117,117 @@ body {
 
 .animate-twinkle {
   animation: twinkle 3s ease-in-out infinite alternate;
+}
+
+/* Shared landing navy (marketing column + Step0 when not using hero wash) */
+.bg-landing-navy-wash {
+  background: linear-gradient(
+    180deg,
+    rgba(3, 10, 36, 0.96) 0%,
+    rgba(6, 14, 48, 0.95) 45%,
+    rgba(2, 8, 32, 0.97) 100%
+  );
+}
+
+/* Home hero card: saturated brand-navy (not gray), still translucent — less blur = less muddy mix */
+.bg-landing-navy-wash-hero {
+  background: linear-gradient(
+    180deg,
+    rgba(26, 52, 108, 0.82) 0%,
+    rgba(18, 42, 92, 0.78) 45%,
+    rgba(12, 34, 78, 0.84) 100%
+  );
+}
+
+/* Fixed stars + clouds: same stack as hero transparency, below inner z-10 shell */
+.lpd-root {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.lpd-stars {
+  position: absolute;
+  inset: 0;
+}
+
+.lpd-star {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.25);
+  animation: lpdTwinkle var(--d, 3s) ease-in-out infinite alternate;
+}
+
+@keyframes lpdTwinkle {
+  0% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+.lpd-clouds {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.lpd-cloud {
+  position: absolute;
+  left: -50%;
+  width: 200%;
+  opacity: 0;
+  font-size: clamp(48px, 8vw, 88px);
+  text-align: left;
+  filter: drop-shadow(0 4px 20px rgba(8, 11, 40, 0.25));
+  animation: lpdCloudDrift var(--cd, 20s) linear infinite;
+  animation-delay: var(--cdelay, 0s);
+}
+
+@keyframes lpdCloudDrift {
+  0% {
+    transform: translateX(-40%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.42;
+  }
+  90% {
+    opacity: 0.42;
+  }
+  100% {
+    transform: translateX(40%);
+    opacity: 0;
+  }
+}
+
+/* Night marketing: viewport-fixed stars clipped to the column (see LandingMarketingFixedStarfield) */
+.lmf-starfield-root {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lpd-star,
+  .lpd-cloud {
+    animation: none !important;
+  }
+
+  .lpd-star {
+    opacity: 0.35;
+  }
+
+  .lpd-cloud {
+    opacity: 0.25;
+    transform: none;
+  }
 }

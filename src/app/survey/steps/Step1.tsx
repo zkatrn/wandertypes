@@ -89,9 +89,9 @@ export function Step1({
                 key={opt.value}
                 type="button"
                 onClick={() => onTripLengthChange(opt.value)}
-                className={`text-xs px-3 py-2 rounded-full border transition-colors ${
+                className={`rounded-full border px-3 py-2 text-xs transition-colors ${
                   isLen
-                    ? "border-amber-500 bg-amber-50 text-amber-950 font-medium"
+                    ? "border-primary bg-primary/10 font-medium text-primary"
                     : "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
                 }`}
               >

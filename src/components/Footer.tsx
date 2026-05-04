@@ -13,7 +13,7 @@ export function Footer() {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <Image src={balloonImage} alt="LumiTrip" width={32} height={32} />
-              <span className="text-lg font-bold text-stone-900">WanderMoodz</span>
+              <span className="text-lg font-bold text-stone-900">VoyageBlitz</span>
             </div>
             <p className="text-sm text-stone-600">
               Personalized travel recommendations that understand what you really need.
@@ -72,7 +72,7 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="border-t border-stone-200 mt-8 pt-8 text-center text-sm text-stone-500">
-          © {currentYear} WanderMoodz. All rights reserved.
+          © {currentYear} VoyageBlitz. All rights reserved.
         </div>
       </div>
     </footer>

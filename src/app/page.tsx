@@ -1,14 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { saveSurveyAnswers, clearSurveyAnswers } from "@/lib/surveyStorage";
 import { Step0 } from "./survey/steps/Step0";
 import { SurveyHeader } from "@/components/SurveyHeader";
+import { LandingMarketingAtmosphere } from "@/components/landing/LandingMarketingAtmosphere";
+import { LandingMarketingFixedStarfield } from "@/components/landing/LandingMarketingFixedStarfield";
+import { LandingMarketingSections } from "@/components/landing/LandingMarketingSections";
 import type { SurveyAnswers } from "@/types/survey";
 
 export default function HomePage() {
   const router = useRouter();
+  const marketingColumnRef = useRef<HTMLDivElement>(null);
   const [answers, setAnswers] = useState<SurveyAnswers>({});
 
   useEffect(() => {
@@ -36,20 +40,30 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen py-8">
-      {/* Full-width header with logo and auth at screen edges */}
-      <div className="px-6 mb-4">
-        <SurveyHeader />
+    <>
+      <div className="relative z-20 flex min-h-screen flex-col py-8">
+        <div className="shrink-0 px-6 pb-2">
+          <SurveyHeader />
+        </div>
+        <div className="flex flex-1 flex-col justify-center px-4 pb-12">
+          <div className="mx-auto w-full max-w-3xl">
+            <Step0
+              destinationList={answers.destinations || answers.destinationList}
+              onUpdate={handleUpdate}
+              onNext={handleNext}
+              darkHeroCard
+            />
+          </div>
+        </div>
       </div>
-      
-      {/* Centered content */}
-      <div className="px-4 max-w-3xl mx-auto">
-        <Step0
-          destinationList={answers.destinations || answers.destinationList}
-          onUpdate={handleUpdate}
-          onNext={handleNext}
-        />
+
+      <div ref={marketingColumnRef} className="relative">
+        <LandingMarketingAtmosphere />
+        <LandingMarketingFixedStarfield anchorRef={marketingColumnRef} />
+        <div className="relative z-10">
+          <LandingMarketingSections surface="night" />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
