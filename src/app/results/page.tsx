@@ -20,6 +20,7 @@ import { fetchTripInterpretation } from "@/lib/fetchTripInterpretation";
 import type { TripInterpretationSource } from "@/lib/fetchTripInterpretation";
 import { Button } from "@/components/ui/Button";
 import { trackEvent } from "@/lib/analytics";
+import { getResultsDestinationTitle } from "@/lib/tripListTitle";
 
 export default function ResultsPage() {
   const router = useRouter();
@@ -227,6 +228,7 @@ export default function ResultsPage() {
   const theme = getTheme(interpretation.selectedTheme);
   const surveyAnswers = loadSurveyAnswers();
   const bannerAnswers = user ? surveyAnswers : null;
+  const destinationTitle = getResultsDestinationTitle(surveyAnswers, interpretation);
 
   return (
     <>
@@ -264,7 +266,11 @@ export default function ResultsPage() {
             shareCopied={shareCopied}
           />
 
-          <WandertypeBanner theme={theme} surveyAnswers={bannerAnswers} />
+          <WandertypeBanner
+            theme={theme}
+            surveyAnswers={bannerAnswers}
+            destinationTitle={destinationTitle}
+          />
 
           {interpretationSource === "fallback" && (
             <p className="mb-5 rounded-lg border border-amber-200 bg-amber-50/95 px-3 py-2.5 text-xs leading-relaxed text-amber-900">

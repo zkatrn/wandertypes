@@ -7,9 +7,15 @@ import { tripLengthDisplayLabel, type SurveyAnswers } from "@/types/survey";
 interface WandertypeBannerProps {
   theme: Theme;
   surveyAnswers: SurveyAnswers | null;
+  /** Main hero line — typically comma-separated places from the survey or comparison. */
+  destinationTitle: string;
 }
 
-export function WandertypeBanner({ theme, surveyAnswers }: WandertypeBannerProps) {
+export function WandertypeBanner({
+  theme,
+  surveyAnswers,
+  destinationTitle,
+}: WandertypeBannerProps) {
   const wandertypeHref = `/wandertypes#${theme.key}`;
 
   // Generate trip context pills from survey answers
@@ -85,6 +91,14 @@ export function WandertypeBanner({ theme, surveyAnswers }: WandertypeBannerProps
       <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 w-80 h-52 bg-gradient-radial from-amber-400/10 to-transparent pointer-events-none" />
 
       <div className="relative z-10">
+        <p className="text-[10px] uppercase tracking-wide text-stone-400 font-medium mb-3">
+          Your trip
+        </p>
+
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl text-stone-900 font-bold leading-tight mb-10 tracking-tight font-serif px-2">
+          {destinationTitle}
+        </h1>
+
         <div className="text-[10px] uppercase tracking-wide text-stone-400 font-medium mb-3">
           Your Wandertype
         </div>
@@ -93,7 +107,7 @@ export function WandertypeBanner({ theme, surveyAnswers }: WandertypeBannerProps
           href={wandertypeHref}
           className="group inline-block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg"
         >
-          <div className="text-4xl sm:text-5xl lg:text-6xl text-primary font-bold leading-tight mb-3 tracking-tight font-serif group-hover:text-primary-dark transition-colors">
+          <div className="text-3xl sm:text-4xl lg:text-5xl text-primary font-bold leading-tight mb-3 tracking-tight font-serif group-hover:text-primary-dark transition-colors">
             {theme.title}
           </div>
           <span className="text-xs text-primary/80 font-medium opacity-0 group-hover:opacity-100 transition-opacity block -mt-1 mb-2">
@@ -108,10 +122,6 @@ export function WandertypeBanner({ theme, surveyAnswers }: WandertypeBannerProps
         <p className="text-sm text-stone-700 leading-relaxed max-w-2xl mx-auto mb-6">
           {theme.longDescription}
         </p>
-
-        {/* <p className="text-sm italic text-primary/90 max-w-2xl mx-auto mb-6">
-          {theme.microcopy}
-        </p> */}
 
         {tripPills.length > 0 && (
           <div className="flex flex-wrap gap-2 justify-center">

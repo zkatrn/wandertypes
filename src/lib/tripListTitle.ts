@@ -1,13 +1,14 @@
+import type { TripInterpretation } from "@/types/interpretation";
+import type { SurveyAnswers } from "@/types/survey";
 import type { TripSession } from "@/lib/firestore";
 
-/**
- * Primary label for My Trips cards: user-chosen places, else comparison destinations.
- */
-export function getTripListTitle(session: TripSession): string {
-  const answers = session.surveyAnswers;
+function destinationPlacesFromSurveyAndCards(
+  surveyAnswers: SurveyAnswers | null | undefined,
+  interpretation: TripInterpretation
+): string {
   const raw = [
-    ...(answers.destinations ?? []),
-    ...(answers.destinationList ?? []),
+    ...(surveyAnswers?.destinations ?? []),
+    ...(surveyAnswers?.destinationList ?? []),
   ];
   const seen = new Set<string>();
   const unique: string[] = [];
@@ -23,11 +24,27 @@ export function getTripListTitle(session: TripSession): string {
     return unique.join(", ");
   }
 
-  const cards = session.interpretation.comparisonCards ?? [];
+  const cards = interpretation.comparisonCards ?? [];
   const names = cards.map((c) => c.destinationName).filter(Boolean);
   if (names.length > 0) {
     return names.join(", ");
   }
 
   return "Your trip";
+}
+
+/** Results hero: user-chosen places, else comparison card destinations. */
+export function getResultsDestinationTitle(
+  surveyAnswers: SurveyAnswers | null | undefined,
+  interpretation: TripInterpretation
+): string {
+  return destinationPlacesFromSurveyAndCards(surveyAnswers, interpretation);
+}
+
+/** My Trips card title — same logic as results destination headline. */
+export function getTripListTitle(session: TripSession): string {
+  return destinationPlacesFromSurveyAndCards(
+    session.surveyAnswers,
+    session.interpretation
+  );
 }

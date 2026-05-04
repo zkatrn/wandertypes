@@ -16,6 +16,7 @@ import { comparisonGridClassName } from "@/lib/resultsLayout";
 import type { TripInterpretation } from "@/types/interpretation";
 import { AlertCircle } from "lucide-react";
 import { SimplePageLoader } from "@/components/loading/SimplePageLoader";
+import { getResultsDestinationTitle } from "@/lib/tripListTitle";
 
 export default function SharedResultsPage() {
   const params = useParams();
@@ -119,6 +120,10 @@ export default function SharedResultsPage() {
     user?.uid && session.userId && user.uid === session.userId
   );
   const bannerAnswers = isOwner ? session.surveyAnswers : null;
+  const destinationTitle = getResultsDestinationTitle(
+    session.surveyAnswers,
+    interpretation
+  );
 
   return (
     <>
@@ -152,7 +157,11 @@ export default function SharedResultsPage() {
             shareCopied={shareCopied}
           />
 
-          <WandertypeBanner theme={theme} surveyAnswers={bannerAnswers} />
+          <WandertypeBanner
+            theme={theme}
+            surveyAnswers={bannerAnswers}
+            destinationTitle={destinationTitle}
+          />
 
           <div className="mb-5 border-b border-stone-200 pb-3 text-[10px] font-medium uppercase tracking-wide text-stone-400">
             Your Destinations — Matched to Your Profile
