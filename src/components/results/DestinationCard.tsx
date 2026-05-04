@@ -2,13 +2,16 @@
 
 import { motion } from "framer-motion";
 import type { DestinationComparisonCard } from "@/types/interpretation";
+import type { Theme } from "@/lib/themes";
+import { getDestinationCardVisuals } from "@/lib/themeColors";
 
 interface DestinationCardProps {
   card: DestinationComparisonCard;
   index: number;
+  theme: Theme;
 }
 
-export function DestinationCard({ card, index }: DestinationCardProps) {
+export function DestinationCard({ card, index, theme }: DestinationCardProps) {
   const rawScores = card.scores as Record<string, number> | undefined;
   const scores = {
     relaxation: rawScores?.relaxation ?? 0,
@@ -57,6 +60,7 @@ export function DestinationCard({ card, index }: DestinationCardProps) {
   const airbnbListings = card.airbnbListings ?? [];
 
   const isWinner = matchScore >= 85;
+  const v = getDestinationCardVisuals(theme, index, isWinner);
 
   const getStarRating = (score: number) => {
     const stars = Math.round((score / 20) * 2) / 2;
@@ -65,48 +69,19 @@ export function DestinationCard({ card, index }: DestinationCardProps) {
     const emptyStars = 5 - Math.ceil(stars);
 
     return (
-      <div className="text-amber-400 text-lg tracking-wide">
+      <div
+        className="text-lg tracking-wide"
+        style={{
+          ...v.starStyle,
+          opacity: 1,
+        }}
+      >
         {"★".repeat(fullStars)}
         {hasHalfStar && "½"}
-        <span className="opacity-30">{"★".repeat(emptyStars)}</span>
+        <span style={{ opacity: 0.32 }}>{"★".repeat(emptyStars)}</span>
       </div>
     );
   };
-
-  const colorSchemes = [
-    {
-      border: "border-orange-500",
-      bg: "bg-orange-500/10",
-      text: "text-orange-400",
-      bar: "bg-gradient-to-r from-orange-500 to-yellow-500",
-    },
-    {
-      border: "border-cyan-500",
-      bg: "bg-cyan-500/10",
-      text: "text-cyan-400",
-      bar: "bg-gradient-to-r from-cyan-500 to-blue-400",
-    },
-    {
-      border: "border-green-500",
-      bg: "bg-green-500/10",
-      text: "text-green-400",
-      bar: "bg-gradient-to-r from-green-500 to-emerald-400",
-    },
-    {
-      border: "border-violet-500",
-      bg: "bg-violet-500/10",
-      text: "text-violet-500",
-      bar: "bg-gradient-to-r from-violet-500 to-fuchsia-400",
-    },
-    {
-      border: "border-amber-600",
-      bg: "bg-amber-500/10",
-      text: "text-amber-600",
-      bar: "bg-gradient-to-r from-amber-500 to-orange-400",
-    },
-  ];
-
-  const colors = colorSchemes[index % colorSchemes.length]!;
 
   const categories = [
     { icon: "🥾", label: "Adventure", value: scores.adventure },
@@ -128,41 +103,47 @@ export function DestinationCard({ card, index }: DestinationCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
       className={`
-        bg-stone-50/95 border border-stone-200 ${colors.border} border-t-4 rounded-lg p-6
-        flex flex-col gap-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:bg-stone-100/95
-        ${isWinner ? "bg-amber-50/95 border-amber-300 shadow-md" : ""}
+        border border-stone-200 border-t-4 rounded-lg p-6
+        flex flex-col gap-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg
       `}
+      style={{
+        ...v.rootStyle,
+        ...(isWinner ? v.winnerExtraStyle : {}),
+      }}
     >
       <div className="flex items-start justify-between gap-3">
         <h3 className="text-lg font-semibold leading-tight text-stone-900 font-serif">
           {card.destinationName}
         </h3>
         <span
-          className={`
-          text-[10px] uppercase tracking-wide px-3 py-1 rounded-full whitespace-nowrap font-medium
-          ${
-            isWinner
-              ? "bg-amber-100/80 text-amber-700 border border-amber-200"
-              : "bg-stone-100/80 text-stone-600 border border-stone-200"
-          }
-        `}
+          className="text-[10px] uppercase tracking-wide px-3 py-1 rounded-full whitespace-nowrap font-medium border"
+          style={isWinner ? v.matchBadgeWinnerStyle : v.matchBadgeStyle}
         >
           {matchLabel}
         </span>
       </div>
 
-      <div className="text-center p-4 bg-stone-100/90 border border-stone-200 rounded-lg">
-        <div className="text-[10px] uppercase tracking-wide text-stone-400 font-medium mb-2">
+      <div
+        className="text-center p-4 rounded-lg border"
+        style={v.matchScoreWellStyle}
+      >
+        <div className="text-[10px] uppercase tracking-wide text-stone-500 font-medium mb-2">
           Match Score
         </div>
-        <div className={`text-4xl font-bold leading-none mb-1 ${colors.text}`}>
+        <div
+          className="text-4xl font-bold leading-none mb-1"
+          style={v.scoreNumberStyle}
+        >
           {matchScore}%
         </div>
         {getStarRating(matchScore)}
       </div>
 
       {hasTripEconomics && (
-        <div className="rounded-lg border border-stone-200 bg-white/70 px-3 py-2.5 text-xs text-stone-600 space-y-1.5 leading-relaxed">
+        <div
+          className="rounded-lg border px-3 py-2.5 text-xs text-stone-600 space-y-1.5 leading-relaxed"
+          style={v.economicsStyle}
+        >
           {card.estimatedSpendBand ? (
             <p>
               <span className="font-semibold text-stone-500">Spend band: </span>
@@ -204,7 +185,7 @@ export function DestinationCard({ card, index }: DestinationCardProps) {
             <span className="text-xs text-stone-600 w-[5.75rem] flex-shrink-0 tracking-wide leading-tight">
               {category.label}
             </span>
-            <div className="flex-1 min-w-0 h-1.5 bg-stone-200 rounded-full overflow-hidden">
+            <div className="flex-1 min-w-0 h-1.5 bg-stone-200/90 rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${Math.min(100, Math.max(0, category.value))}%` }}
@@ -213,7 +194,8 @@ export function DestinationCard({ card, index }: DestinationCardProps) {
                   duration: 0.55,
                   ease: "easeOut",
                 }}
-                className={`h-full rounded-full ${colors.bar}`}
+                className="h-full rounded-full"
+                style={{ background: v.barGradient }}
               />
             </div>
           </div>
@@ -221,14 +203,20 @@ export function DestinationCard({ card, index }: DestinationCardProps) {
       </div>
 
       <div className="space-y-2">
-        <div className="p-3 bg-green-50/95 border border-green-200 rounded-lg">
-          <div className="text-[10px] uppercase tracking-wide text-green-700 font-medium mb-1">
+        <div className="p-3 rounded-lg border" style={v.verdictGoodStyle}>
+          <div
+            className="text-[10px] uppercase tracking-wide font-medium mb-1"
+            style={v.verdictGoodLabelStyle}
+          >
             Best fit if…
           </div>
           <div className="text-xs text-stone-700 leading-relaxed">{verdictGood}</div>
         </div>
-        <div className="p-3 bg-amber-50/95 border border-amber-200 rounded-lg">
-          <div className="text-[10px] uppercase tracking-wide text-amber-700 font-medium mb-1">
+        <div className="p-3 rounded-lg border" style={v.verdictWatchStyle}>
+          <div
+            className="text-[10px] uppercase tracking-wide font-medium mb-1"
+            style={v.verdictWatchLabelStyle}
+          >
             Watch out for…
           </div>
           <div className="text-xs text-stone-700 leading-relaxed">{verdictWatch}</div>
@@ -247,7 +235,8 @@ export function DestinationCard({ card, index }: DestinationCardProps) {
                 href={listing.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-xs text-primary bg-stone-100/90 border border-stone-200 rounded-lg px-3 py-2 hover:bg-stone-200/90 transition-colors"
+                className="block text-xs text-primary border rounded-lg px-3 py-2 transition-colors hover:brightness-[0.97]"
+                style={v.listingLinkStyle}
               >
                 🏠 {listing.label}
               </a>

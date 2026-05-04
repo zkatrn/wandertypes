@@ -183,7 +183,12 @@ export default function ResultsPage() {
             )} mb-12`}
           >
             {interpretation.comparisonCards.map((card, index) => (
-              <DestinationCard key={card.destinationName} card={card} index={index} />
+              <DestinationCard
+                key={card.destinationName}
+                card={card}
+                index={index}
+                theme={theme}
+              />
             ))}
           </div>
 

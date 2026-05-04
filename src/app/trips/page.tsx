@@ -17,23 +17,55 @@ export default function TripsPage() {
   const [deleting, setDeleting] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    let cancelled = false;
+    let unsubAuth: (() => void) | undefined;
+    let lastLoadedUid: string | undefined;
+
+    void (async () => {
+      await auth.authStateReady();
+      if (cancelled) return;
+
+      const user = auth.currentUser;
       if (!user) {
-        router.push("/");
+        setLoading(false);
+        router.replace("/");
         return;
       }
 
-      try {
-        const userTrips = await getUserTripSessions(user.uid);
-        setTrips(userTrips);
-      } catch (error) {
-        console.error("Failed to load trips:", error);
-      } finally {
-        setLoading(false);
-      }
-    });
+      const loadForUser = async (uid: string) => {
+        try {
+          const userTrips = await getUserTripSessions(uid);
+          if (!cancelled) setTrips(userTrips);
+        } catch (error) {
+          console.error("Failed to load trips:", error);
+        } finally {
+          if (!cancelled) setLoading(false);
+        }
+      };
 
-    return () => unsubscribe();
+      lastLoadedUid = user.uid;
+      await loadForUser(user.uid);
+
+      unsubAuth = onAuthStateChanged(auth, async (nextUser) => {
+        if (cancelled) return;
+        if (!nextUser) {
+          lastLoadedUid = undefined;
+          setTrips([]);
+          setLoading(false);
+          router.replace("/");
+          return;
+        }
+        if (nextUser.uid === lastLoadedUid) return;
+        lastLoadedUid = nextUser.uid;
+        setLoading(true);
+        await loadForUser(nextUser.uid);
+      });
+    })();
+
+    return () => {
+      cancelled = true;
+      unsubAuth?.();
+    };
   }, [router]);
 
   const handleDelete = async (e: React.MouseEvent, tripId: string) => {
