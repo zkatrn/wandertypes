@@ -28,10 +28,9 @@ function RootLayoutShell({ children }: { children: React.ReactNode }) {
             <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
               {/* Extra width so repeat-x + parallax pan never shows empty edges */}
               <div
-                className={`absolute inset-y-0 -left-[25%] h-full w-[150%] min-w-[1800px] bg-app-photo-backdrop bg-parallax`}
+                className="absolute max-md:inset-0 md:top-0 md:bottom-0 md:left-[-25%] md:h-full md:w-[150%] md:min-w-[1800px] bg-app-photo-backdrop bg-parallax"
                 style={{
                   backgroundImage: "url(/bg.png)",
-                  backgroundRepeat: "repeat-x",
                   backgroundAttachment: "scroll",
                   filter: "saturate(0.5) brightness(1.05)",
                 }}
@@ -42,7 +41,6 @@ function RootLayoutShell({ children }: { children: React.ReactNode }) {
               className="pointer-events-none fixed inset-0 z-0 bg-app-photo-backdrop"
               style={{
                 backgroundImage: "url(/bg.png)",
-                backgroundRepeat: "repeat-x",
                 backgroundAttachment: "fixed",
                 filter: "saturate(0.5) brightness(1.05)",
               }}

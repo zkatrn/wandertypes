@@ -205,7 +205,7 @@ export function Step0({
           </div>
         }
         title="Where are you thinking of going?"
-        description="Add up to 4 destinations to compare"
+        description=""
         showIcon
         toneOnPhoto={darkHeroCard}
       />

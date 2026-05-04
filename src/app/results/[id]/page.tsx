@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getTripSession } from "@/lib/firestore";
 import { getTheme } from "@/lib/themes";
@@ -11,8 +11,7 @@ import { TwinklingStars } from "@/components/results/TwinklingStars";
 import { comparisonGridClassName } from "@/lib/resultsLayout";
 import type { TripInterpretation } from "@/types/interpretation";
 import { AlertCircle } from "lucide-react";
-import { LoadingScreen } from "@/components/loading/LoadingScreen";
-import { loadSurveyAnswers } from "@/lib/surveyStorage";
+import { SimplePageLoader } from "@/components/loading/SimplePageLoader";
 
 export default function SharedResultsPage() {
   const params = useParams();
@@ -20,14 +19,6 @@ export default function SharedResultsPage() {
   const [interpretation, setInterpretation] = useState<TripInterpretation | null>(null);
   const [loading, setLoading] = useState(true);
   const [backgroundImage, setBackgroundImage] = useState<string>("/bg.png");
-
-  const travelFactHints = useMemo(() => {
-    const a = loadSurveyAnswers();
-    return [
-      ...(a?.destinations ?? []),
-      ...(a?.destinationList ?? []),
-    ].filter((s): s is string => Boolean(s?.trim()));
-  }, []);
 
   useEffect(() => {
     async function loadSession() {
@@ -60,10 +51,7 @@ export default function SharedResultsPage() {
 
   if (loading) {
     return (
-      <LoadingScreen
-        relatedPhrases={travelFactHints}
-        statusSteps={["Loading your travel comparison..."]}
-      />
+      <SimplePageLoader message="Loading your saved comparison…" />
     );
   }
 

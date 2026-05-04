@@ -7,7 +7,7 @@ import { auth } from "@/lib/firebase";
 import { getUserTripSessions, deleteTripSession, type TripSession } from "@/lib/firestore";
 import { getTheme } from "@/lib/themes";
 import { Button } from "@/components/ui/Button";
-import { LoadingScreen } from "@/components/loading/LoadingScreen";
+import { SimplePageLoader } from "@/components/loading/SimplePageLoader";
 import { Calendar, MapPin, Trash2 } from "lucide-react";
 
 export default function TripsPage() {
@@ -89,10 +89,7 @@ export default function TripsPage() {
 
   if (loading) {
     return (
-      <LoadingScreen
-        statusSteps={["Loading your trips..."]}
-        brandLabel="VoyageBlitz"
-      />
+      <SimplePageLoader message="Loading your trips…" />
     );
   }
 

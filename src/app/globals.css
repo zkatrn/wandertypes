@@ -96,6 +96,25 @@ body {
   }
 }
 
+/*
+ * Phones / narrow viewports: one centered cover crop instead of repeat-x.
+ * Art like /bg.png is not edge-seamless when tiled; pan + repeat shows a vertical join line.
+ */
+@media (max-width: 767px) {
+  .bg-app-photo-backdrop {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    /* Beats inline `fixed` on survey — iOS paints fixed backgrounds poorly. */
+    background-attachment: scroll !important;
+  }
+
+  .bg-app-photo-backdrop.bg-parallax {
+    animation: none;
+    background-size: cover;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bg-parallax {
     animation: none;
