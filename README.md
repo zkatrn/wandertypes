@@ -5,6 +5,7 @@ A warm, emotionally-aware travel planning app that helps you understand what kin
 ## Getting Started
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
@@ -12,6 +13,7 @@ npm install
 2. Set up Firebase credentials in `.env.local`
 
 3. Run the development server:
+
 ```bash
 npm run dev
 ```
@@ -25,3 +27,5 @@ Open [http://localhost:3000](http://localhost:3000) to see the app.
 - AI-powered trip interpretation
 - Personalized destination comparison board
 - Theme selection based on travel psychology
+
+## VoyageBlitz
