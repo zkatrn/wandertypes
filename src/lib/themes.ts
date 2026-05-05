@@ -1,5 +1,12 @@
 import type { ThemeKey } from "@/types/interpretation";
+import { BG_HERO_SRC } from "./siteAssets";
 import { WANDERTYPES, type WandertypeKey } from "./wanderType";
+
+/**
+ * Must match `BG_HERO_SRC` (including `?v=` cache bust) — plain `/bg.png` is a different URL
+ * and browsers/CDNs often keep an old cached copy, which looks like “new image then revert.”
+ */
+const THEME_BACKGROUND_IMAGE = BG_HERO_SRC;
 
 export type Theme = {
   key: ThemeKey;
@@ -41,7 +48,7 @@ const VISUAL: Record<WandertypeKey, VisualTheme> = {
       cardBackground: "#ffffff",
     },
     gradient: "from-[#1a4a6b] to-[#f9c784]",
-    backgroundImage: "/background-the-unplugger.png",
+    backgroundImage: THEME_BACKGROUND_IMAGE,
   },
   golden_adventure: {
     colors: {
@@ -52,7 +59,7 @@ const VISUAL: Record<WandertypeKey, VisualTheme> = {
       cardBackground: "#ffffff",
     },
     gradient: "from-[#1a1a2e] to-[#f4800a]",
-    backgroundImage: "/background-the-seeker.png",
+    backgroundImage: THEME_BACKGROUND_IMAGE,
   },
   city_spark: {
     colors: {
@@ -63,7 +70,7 @@ const VISUAL: Record<WandertypeKey, VisualTheme> = {
       cardBackground: "#ffffff",
     },
     gradient: "from-[#1e1040] to-[#f4c430]",
-    backgroundImage: "/background-the-wanderer.png",
+    backgroundImage: THEME_BACKGROUND_IMAGE,
   },
   rainforest_luxe: {
     colors: {
@@ -74,7 +81,7 @@ const VISUAL: Record<WandertypeKey, VisualTheme> = {
       cardBackground: "#ffffff",
     },
     gradient: "from-[#1a2e1e] to-[#f9d78a]",
-    backgroundImage: "/background-the-nester.png",
+    backgroundImage: THEME_BACKGROUND_IMAGE,
   },
   slow_romance: {
     colors: {
@@ -85,7 +92,7 @@ const VISUAL: Record<WandertypeKey, VisualTheme> = {
       cardBackground: "#ffffff",
     },
     gradient: "from-[#1a0a2e] to-[#f4c4a0]",
-    backgroundImage: "/background-the-romantic.png",
+    backgroundImage: THEME_BACKGROUND_IMAGE,
   },
   wild_explorer: {
     colors: {
@@ -96,7 +103,7 @@ const VISUAL: Record<WandertypeKey, VisualTheme> = {
       cardBackground: "#ffffff",
     },
     gradient: "from-[#0a1628] to-[#f4c430]",
-    backgroundImage: "/background-the-collector.png",
+    backgroundImage: THEME_BACKGROUND_IMAGE,
   },
   balanced_journey: {
     colors: {
@@ -107,7 +114,7 @@ const VISUAL: Record<WandertypeKey, VisualTheme> = {
       cardBackground: "#ffffff",
     },
     gradient: "from-[#0e2a24] to-[#f4d060]",
-    backgroundImage: "/background-the-harmony-seeker.png",
+    backgroundImage: THEME_BACKGROUND_IMAGE,
   },
 };
 

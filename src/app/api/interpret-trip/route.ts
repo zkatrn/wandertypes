@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
 import type { TripInterpretation } from "@/types/interpretation";
 import type { SurveyAnswers } from "@/types/survey";
 import { normalizeTripInterpretation } from "@/lib/normalizeInterpretation";
@@ -10,44 +9,48 @@ import {
 import { buildInterpretTripUserPrompt } from "@/lib/interpretTripPrompt";
 import { enrichAllCardsAirportDistances } from "@/lib/googleMapsAirportEnrichment";
 import { applyComparisonCardPolicy } from "@/lib/comparisonCardPolicy";
-import { extractTextFromAnthropicMessageContent } from "@/lib/anthropicMessageText";
+import { completeInterpretTripPrompt, isOllama } from "@/lib/aiClient";
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
-
-/** `claude-3-5-sonnet-20241022` and older IDs return 404; override via ANTHROPIC_MODEL if needed. */
-const ANTHROPIC_MESSAGES_MODEL =
-  process.env.ANTHROPIC_MODEL?.trim() || "claude-sonnet-4-6";
+/** Allows long local Ollama runs; Vercel still enforces plan limits. */
+export const maxDuration = 300;
 
 export async function POST(request: NextRequest) {
   try {
-    if (!process.env.ANTHROPIC_API_KEY) {
+    if (!isOllama && !process.env.ANTHROPIC_API_KEY) {
       return NextResponse.json(
         { error: "ANTHROPIC_API_KEY is not configured" },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
-    const body = await request.json();
+    const raw = await request.text();
+    if (!raw.trim()) {
+      return NextResponse.json(
+        { error: "Request body is empty" },
+        { status: 400 },
+      );
+    }
+    let body: { surveyAnswers?: unknown; userId?: unknown };
+    try {
+      body = JSON.parse(raw) as typeof body;
+    } catch {
+      return NextResponse.json(
+        { error: "Request body is not valid JSON" },
+        { status: 400 },
+      );
+    }
     const { surveyAnswers, userId: _userId } = body;
 
     if (!surveyAnswers || typeof surveyAnswers !== "object") {
       return NextResponse.json(
         { error: "surveyAnswers object is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const userPrompt = buildInterpretTripUserPrompt(surveyAnswers);
 
-    const message = await anthropic.messages.create({
-      model: ANTHROPIC_MESSAGES_MODEL,
-      max_tokens: 8192,
-      messages: [{ role: "user", content: userPrompt }],
-    });
-
-    const assistantText = extractTextFromAnthropicMessageContent(message.content);
+    const assistantText = await completeInterpretTripPrompt(userPrompt);
 
     const jsonText = extractJsonObjectFromAssistantText(assistantText);
     let parsedJson: unknown;
@@ -57,7 +60,7 @@ export async function POST(request: NextRequest) {
       console.error("Invalid JSON from model:", jsonText.slice(0, 2000));
       return NextResponse.json(
         { error: "Model did not return valid JSON" },
-        { status: 502 }
+        { status: 502 },
       );
     }
 
@@ -69,7 +72,7 @@ export async function POST(request: NextRequest) {
           error: "Model JSON failed schema validation",
           details: validated.error.flatten(),
         },
-        { status: 422 }
+        { status: 422 },
       );
     }
 
@@ -79,7 +82,7 @@ export async function POST(request: NextRequest) {
 
     interpretation = applyComparisonCardPolicy(
       interpretation,
-      surveyAnswers as SurveyAnswers
+      surveyAnswers as SurveyAnswers,
     );
 
     const googleMapsKey = process.env.GOOGLE_MAPS_API_KEY;
@@ -87,7 +90,7 @@ export async function POST(request: NextRequest) {
       try {
         const enriched = await enrichAllCardsAirportDistances(
           interpretation.comparisonCards,
-          googleMapsKey
+          googleMapsKey,
         );
         interpretation = { ...interpretation, comparisonCards: enriched };
       } catch (geoErr) {

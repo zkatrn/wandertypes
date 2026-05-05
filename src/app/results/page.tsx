@@ -16,7 +16,10 @@ import { TwinklingStars } from "@/components/results/TwinklingStars";
 import { ResultsSaveShareToolbar } from "@/components/results/ResultsSaveShareToolbar";
 import { comparisonGridClassName } from "@/lib/resultsLayout";
 import type { TripInterpretation } from "@/types/interpretation";
-import { fetchTripInterpretation } from "@/lib/fetchTripInterpretation";
+import {
+  fetchTripInterpretation,
+  isAbortError,
+} from "@/lib/fetchTripInterpretation";
 import type { TripInterpretationSource } from "@/lib/fetchTripInterpretation";
 import { Button } from "@/components/ui/Button";
 import { trackEvent } from "@/lib/analytics";
@@ -61,6 +64,7 @@ export default function ResultsPage() {
 
   useEffect(() => {
     let cancelled = false;
+    const ac = new AbortController();
 
     async function load() {
       setLoadError(null);
@@ -72,7 +76,7 @@ export default function ResultsPage() {
         }
 
         const { interpretation: next, source } =
-          await fetchTripInterpretation(answers);
+          await fetchTripInterpretation(answers, { signal: ac.signal });
         if (cancelled) return;
 
         setInterpretation(next);
@@ -88,6 +92,7 @@ export default function ResultsPage() {
         };
         img.src = theme.backgroundImage;
       } catch (e) {
+        if (isAbortError(e)) return;
         console.error("Results load failed:", e);
         if (!cancelled) {
           setLoadError(
@@ -100,6 +105,7 @@ export default function ResultsPage() {
     void load();
     return () => {
       cancelled = true;
+      ac.abort();
     };
   }, [router, retryKey]);
 
@@ -273,13 +279,18 @@ export default function ResultsPage() {
 
           {interpretationSource === "fallback" && (
             <p className="mb-5 rounded-lg border border-amber-200 bg-amber-50/95 px-3 py-2.5 text-xs leading-relaxed text-amber-900">
-              The AI interpreter did not return a result (often missing{" "}
+              The AI interpreter did not return a usable result (missing{" "}
               <code className="rounded bg-amber-100/80 px-1 text-[10px]">
                 ANTHROPIC_API_KEY
               </code>{" "}
-              on the server, a model error, or validation failure). You are seeing an
-              offline preview: airports and activities use built-in city hints where we
-              recognize the place, not live model output.
+              when using Anthropic, Ollama not reachable or returning bad JSON, or the
+              model output failing validation). Check the browser Network tab for{" "}
+              <code className="rounded bg-amber-100/80 px-1 text-[10px]">
+                POST /api/interpret-trip
+              </code>{" "}
+              and your server terminal for errors. You are seeing an offline preview:
+              airports and activities use built-in city hints where we recognize the
+              place, not live model output.
             </p>
           )}
 

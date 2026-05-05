@@ -75,8 +75,7 @@ Strongly include (server can backfill if missing, but you should provide them):
 - possibleDrawbacks: string[] (1–3 honest cons)
 - verdictGood: string (one sentence, "best fit if…" voice)
 - verdictWatch: string (one sentence, "watch out…" voice)
-- scores: object with ALL numeric 0–100 fields:
-  relaxation, adventure, accessibility, wowFactor, food, nightlife, nature, costEfficiency, beach, eightNightValue
+- scores: one flat JSON object only. Keys must be exactly (each value a **number** 0–100, never a string): relaxation, adventure, accessibility, wowFactor, food, nightlife, nature, costEfficiency, beach, eightNightValue. Example: \`"beach": 72, "eightNightValue": 85\` — never write a key name where a number belongs (invalid: \`"beach": "eightNightValue": 85\`).
 - suggestedActivities: string[] — exactly 3 to 6 concrete, bookable-style ideas per destination (named trails, neighborhoods, museums, boat tours, day hikes, food experiences). Each string should stand alone (no fake durations).
 - estimatedSpendBand: string — one qualitative **total-trip** band for lodging + food + local transport matching \`tripLengthNights\` when set (e.g. "Mid: about $2.5k–4k per person for ~6 nights, flights extra"). Ranges only; no fake invoices or live fares.
 - primaryAirportLabel: string — the main international or major airport most travelers use for this base (include IATA code when you know it, e.g. "Marco Polo (VCE)").
@@ -89,6 +88,7 @@ Do NOT include driving distance or minutes to the airport in JSON — the server
 ${destinationRules}
 
 Rules:
+- Keep prose fields concise so the entire JSON completes in one response (truncated JSON breaks the app).
 - Never invent live prices or availability.
 - Never claim real-time data.
 - Theme must match the emotional + pacing signal from answers; prefer one clear Wandertype.

@@ -98,7 +98,7 @@ export function WandertypeBanner({
         <h1 className="text-4xl sm:text-5xl lg:text-6xl text-stone-900 font-bold leading-tight mb-10 tracking-tight font-serif px-2">
           {destinationTitle}
         </h1>
-
+{/* 
         <div className="text-[10px] uppercase tracking-wide text-stone-400 font-medium mb-3">
           Your Wandertype
         </div>
@@ -121,7 +121,7 @@ export function WandertypeBanner({
 
         <p className="text-sm text-stone-700 leading-relaxed max-w-2xl mx-auto mb-6">
           {theme.longDescription}
-        </p>
+        </p> */}
 
         {tripPills.length > 0 && (
           <div className="flex flex-wrap gap-2 justify-center">

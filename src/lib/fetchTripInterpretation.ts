@@ -11,18 +11,31 @@ export type FetchTripInterpretationResult = {
   source: TripInterpretationSource;
 };
 
+export function isAbortError(e: unknown): boolean {
+  return (
+    typeof e === "object" &&
+    e !== null &&
+    "name" in e &&
+    (e as { name: string }).name === "AbortError"
+  );
+}
+
 /**
  * Calls the server interpret-trip route. On network or validation failure,
  * returns a survey-driven mock so the results page always has data.
+ * Pass `signal` to cancel (e.g. React Strict Mode remount); aborted requests
+ * rethrow and must not be treated as model failure.
  */
 export async function fetchTripInterpretation(
-  surveyAnswers: SurveyAnswers
+  surveyAnswers: SurveyAnswers,
+  options?: { signal?: AbortSignal },
 ): Promise<FetchTripInterpretationResult> {
   try {
     const res = await fetch("/api/interpret-trip", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ surveyAnswers }),
+      signal: options?.signal,
     });
     const rawBody = await res.text();
     let data: { interpretation?: TripInterpretation; error?: string } = {};
@@ -42,6 +55,7 @@ export async function fetchTripInterpretation(
     }
     console.warn("interpret-trip not ok:", res.status, data.error);
   } catch (e) {
+    if (isAbortError(e)) throw e;
     console.error("interpret-trip fetch failed:", e);
   }
   try {
