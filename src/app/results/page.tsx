@@ -278,20 +278,22 @@ export default function ResultsPage() {
           />
 
           {interpretationSource === "fallback" && (
-            <p className="mb-5 rounded-lg border border-amber-200 bg-amber-50/95 px-3 py-2.5 text-xs leading-relaxed text-amber-900">
-              The AI interpreter did not return a usable result (missing{" "}
-              <code className="rounded bg-amber-100/80 px-1 text-[10px]">
-                ANTHROPIC_API_KEY
-              </code>{" "}
-              when using Anthropic, Ollama not reachable or returning bad JSON, or the
-              model output failing validation). Check the browser Network tab for{" "}
-              <code className="rounded bg-amber-100/80 px-1 text-[10px]">
-                POST /api/interpret-trip
-              </code>{" "}
-              and your server terminal for errors. You are seeing an offline preview:
-              airports and activities use built-in city hints where we recognize the
-              place, not live model output.
-            </p>
+            <div className="mb-5 rounded-lg border border-amber-200 bg-amber-50/95 px-3 py-2.5 text-xs leading-relaxed text-amber-900">
+              <p className="font-medium text-amber-950">
+                Preview mode — we couldn&apos;t finish the personalized interpretation
+                right now, so this board uses built-in hints from your answers instead of
+                a full AI run.
+              </p>
+              <p className="mt-2 text-[11px] text-amber-900/90">
+                Site owners: failures usually mean missing AI credentials on the server,
+                the AI service errored, or the response didn&apos;t validate — check
+                Vercel env vars and logs for{" "}
+                <code className="rounded bg-amber-100/80 px-1 text-[10px]">
+                  POST /api/interpret-trip
+                </code>
+                .
+              </p>
+            </div>
           )}
 
           <div className="mb-5 border-b border-stone-200 pb-3 text-[10px] font-medium uppercase tracking-wide text-stone-400">
