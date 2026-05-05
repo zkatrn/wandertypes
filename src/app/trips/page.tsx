@@ -14,6 +14,7 @@ import { getTheme } from "@/lib/themes";
 import { getTripListTitle } from "@/lib/tripListTitle";
 import { Button } from "@/components/ui/Button";
 import { SimplePageLoader } from "@/components/loading/SimplePageLoader";
+import { BG_HERO_SRC } from "@/lib/siteAssets";
 import { Calendar, MapPin, Trash2 } from "lucide-react";
 
 export default function TripsPage() {
@@ -132,7 +133,7 @@ export default function TripsPage() {
       <div
         className="fixed inset-0 z-0 bg-app-photo-backdrop"
         style={{
-          backgroundImage: "url(/bg.png)",
+          backgroundImage: `url(${BG_HERO_SRC})`,
           backgroundAttachment: "fixed",
           filter: "saturate(0.5) brightness(1.05)",
         }}

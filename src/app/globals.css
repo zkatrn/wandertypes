@@ -186,15 +186,6 @@ body {
   }
 }
 
-/* Night marketing: viewport-fixed stars clipped to the column (see LandingMarketingFixedStarfield) */
-.lmf-starfield-root {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  overflow: hidden;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .lpd-star,
   .lpd-cloud {

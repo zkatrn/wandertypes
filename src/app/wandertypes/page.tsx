@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import balloonImage from "@/lib/assets/balloon.png";
+import { BG_HERO_SRC } from "@/lib/siteAssets";
 import { WANDERTYPES, type WandertypeKey } from "@/lib/wanderType";
 import { Button } from "@/components/ui/Button";
 
@@ -26,7 +27,7 @@ export default function WanderTypesPage() {
       <div
         className="fixed inset-0 z-0 bg-app-photo-backdrop"
         style={{
-          backgroundImage: "url(/bg.png)",
+          backgroundImage: `url(${BG_HERO_SRC})`,
           backgroundAttachment: "fixed",
           filter: "saturate(0.5) brightness(1.05)",
         }}

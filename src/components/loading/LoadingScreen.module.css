@@ -17,23 +17,20 @@
   overflow: hidden;
 }
 
-.skyBgWrap {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-}
-
-.skyBgImage {
-  object-fit: cover;
-  object-position: center top;
-  opacity: 0.5;
-}
-
-.stars {
+/* Same dual-panel + seamlessParallaxDrift idea as SeamlessParallaxBackground (see globals.css). */
+.starsParallaxShell {
   position: fixed;
   inset: 0;
   z-index: 1;
   pointer-events: none;
+  overflow: hidden;
+}
+
+.starsPanel {
+  position: relative;
+  height: 100%;
+  width: 50%;
+  flex-shrink: 0;
 }
 
 .star {

@@ -7,7 +7,7 @@ export type SeamlessParallaxBackgroundProps = {
   imageUrl: string;
   /** One full cycle = drifting exactly one viewport width (default ~2.5 min). */
   durationSec?: number;
-  /** Applied to both duplicated panels (e.g. CSS filter string). */
+  /** Applied to both duplicated panels. Must be valid CSS `filter` functions only (e.g. brightness(0.5) to darken — there is no `darken()`). */
   imageFilter?: string;
   wrapperClassName?: string;
 };

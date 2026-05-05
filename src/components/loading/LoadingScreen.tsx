@@ -1,11 +1,17 @@
 "use client";
 
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import { useContext, useEffect, useMemo, useState } from "react";
 import balloonImage from "@/lib/assets/balloon.png";
+import { SeamlessParallaxBackground } from "@/components/layout/SeamlessParallaxBackground";
+import { BG_HERO_SRC } from "@/lib/siteAssets";
 import { FullScreenLoadingContext } from "@/context/FullScreenLoadingContext";
 import { LOADING_SCREEN_FACTS } from "@/data/loadingScreenFacts";
 import styles from "./LoadingScreen.module.css";
+
+/** Must match `SeamlessParallaxBackground` so the hero and stars drift in sync. */
+const LOADING_PARALLAX_DURATION_SEC = 150;
 
 /** Same cadence and copy as loading_screen.html status cycling. */
 export const DEFAULT_LOADING_STATUS_STEPS = [
@@ -170,32 +176,42 @@ export function LoadingScreen({
 
   return (
     <div className={styles.root}>
-      <div className={styles.skyBgWrap}>
-        <Image
-          src="/bg.png"
-          alt=""
-          fill
-          className={styles.skyBgImage}
-          priority
-          sizes="100vw"
-        />
-      </div>
+      <SeamlessParallaxBackground
+        imageUrl={BG_HERO_SRC}
+        durationSec={LOADING_PARALLAX_DURATION_SEC}
+        imageFilter="opacity(0.3) saturate(0.5)"
+        wrapperClassName="fixed inset-0 z-0 pointer-events-none"
+      />
 
-      <div className={styles.stars} aria-hidden>
-        {stars.map((s) => (
-          <div
-            key={s.id}
-            className={styles.star}
-            style={{
-              width: s.size,
-              height: s.size,
-              top: `${s.topPct}%`,
-              left: `${s.leftPct}%`,
-              ["--d" as string]: `${s.durationS.toFixed(1)}s`,
-              animationDelay: `${s.delayS.toFixed(1)}s`,
-            }}
-          />
-        ))}
+      <div className={styles.starsParallaxShell} aria-hidden>
+        <div
+          className="seamless-parallax-track absolute left-0 top-0 flex h-full"
+          style={
+            {
+              width: "200%",
+              "--seamless-parallax-duration": `${LOADING_PARALLAX_DURATION_SEC}s`,
+            } as CSSProperties
+          }
+        >
+          {[0, 1].map((panel) => (
+            <div key={panel} className={styles.starsPanel}>
+              {stars.map((s) => (
+                <div
+                  key={`${panel}-${s.id}`}
+                  className={styles.star}
+                  style={{
+                    width: s.size,
+                    height: s.size,
+                    top: `${s.topPct}%`,
+                    left: `${s.leftPct}%`,
+                    ["--d" as string]: `${s.durationS.toFixed(1)}s`,
+                    animationDelay: `${s.delayS.toFixed(1)}s`,
+                  }}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
 
       <div

@@ -5,6 +5,7 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { LoadingScreen } from "@/components/loading/LoadingScreen";
 import { GoogleSignInCard } from "@/components/auth/GoogleSignInCard";
+import { BG_HERO_SRC } from "@/lib/siteAssets";
 
 type AuthGateProps = {
   children: React.ReactNode;
@@ -38,7 +39,7 @@ export function AuthGate({ children }: AuthGateProps) {
         <div
           className="fixed inset-0 z-0 bg-app-photo-backdrop"
           style={{
-            backgroundImage: "url(/bg.png)",
+            backgroundImage: `url(${BG_HERO_SRC})`,
             backgroundAttachment: "fixed",
             filter: "saturate(0.5) brightness(1.05)",
           }}

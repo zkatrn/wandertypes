@@ -18,6 +18,7 @@ import { AlertCircle } from "lucide-react";
 import { SimplePageLoader } from "@/components/loading/SimplePageLoader";
 import { getResultsDestinationTitle } from "@/lib/tripListTitle";
 import { SeamlessParallaxBackground } from "@/components/layout/SeamlessParallaxBackground";
+import { BG_HERO_SRC } from "@/lib/siteAssets";
 
 export default function SharedResultsPage() {
   const params = useParams();
@@ -25,7 +26,7 @@ export default function SharedResultsPage() {
   const [session, setSession] = useState<TripSession | null>(null);
   const [interpretation, setInterpretation] = useState<TripInterpretation | null>(null);
   const [loading, setLoading] = useState(true);
-  const [backgroundImage, setBackgroundImage] = useState<string>("/bg.png");
+  const [backgroundImage, setBackgroundImage] = useState<string>(BG_HERO_SRC);
   const [user, setUser] = useState<User | null>(null);
   const [shareCopied, setShareCopied] = useState(false);
   const [shareBusy, setShareBusy] = useState(false);
@@ -51,7 +52,7 @@ export default function SharedResultsPage() {
             setBackgroundImage(theme.backgroundImage);
           };
           img.onerror = () => {
-            setBackgroundImage("/bg.png");
+            setBackgroundImage(BG_HERO_SRC);
           };
           img.src = theme.backgroundImage;
         }

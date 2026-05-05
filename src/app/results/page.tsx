@@ -22,13 +22,14 @@ import { Button } from "@/components/ui/Button";
 import { trackEvent } from "@/lib/analytics";
 import { SeamlessParallaxBackground } from "@/components/layout/SeamlessParallaxBackground";
 import { getResultsDestinationTitle } from "@/lib/tripListTitle";
+import { BG_HERO_SRC } from "@/lib/siteAssets";
 
 export default function ResultsPage() {
   const router = useRouter();
   const [interpretation, setInterpretation] = useState<TripInterpretation | null>(null);
   const [interpretationSource, setInterpretationSource] =
     useState<TripInterpretationSource | null>(null);
-  const [backgroundImage, setBackgroundImage] = useState<string>("/bg.png");
+  const [backgroundImage, setBackgroundImage] = useState<string>(BG_HERO_SRC);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [retryKey, setRetryKey] = useState(0);
   const [user, setUser] = useState<User | null>(null);
@@ -83,7 +84,7 @@ export default function ResultsPage() {
           if (!cancelled) setBackgroundImage(theme.backgroundImage);
         };
         img.onerror = () => {
-          if (!cancelled) setBackgroundImage("/bg.png");
+          if (!cancelled) setBackgroundImage(BG_HERO_SRC);
         };
         img.src = theme.backgroundImage;
       } catch (e) {

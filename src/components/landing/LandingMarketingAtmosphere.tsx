@@ -2,7 +2,7 @@
 
 /**
  * Full-column navy wash behind night marketing sections (deeper than the home hero card — see `.bg-landing-navy-wash-hero` in `globals.css`).
- * Stars + clouds: `LandingParallaxDecor` (layout) + `LandingMarketingFixedStarfield` (home).
+ * Stars + clouds: `LandingParallaxDecor` (layout) + `LandingMarketingFixedStarfield` (home night column).
  */
 export function LandingMarketingAtmosphere() {
   return (

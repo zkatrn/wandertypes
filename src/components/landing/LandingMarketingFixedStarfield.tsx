@@ -35,8 +35,9 @@ type LandingMarketingFixedStarfieldProps = {
 };
 
 /**
- * Viewport-fixed twinkling stars, clipped to the marketing column’s screen
- * rectangle so they stay “pinned” to the window while navy content scrolls.
+ * Viewport-fixed twinkling stars, clipped to the marketing column’s on-screen
+ * rectangle so they stay pinned while the navy column scrolls. z-[9] sits above
+ * the navy wash (z-0) and below section copy (z-10).
  */
 export function LandingMarketingFixedStarfield({
   anchorRef,
@@ -111,7 +112,7 @@ export function LandingMarketingFixedStarfield({
 
   return (
     <div
-      className="lmf-starfield-root"
+      className="pointer-events-none fixed inset-0 z-[9] overflow-hidden"
       style={{ clipPath }}
       aria-hidden
     >

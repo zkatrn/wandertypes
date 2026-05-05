@@ -6,6 +6,7 @@ import { auth } from "@/lib/firebase";
 import { AuthGate } from "@/components/AuthGate";
 import { AccountDeletionCard } from "@/components/settings/AccountDeletionCard";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
+import { BG_HERO_SRC } from "@/lib/siteAssets";
 import Link from "next/link";
 import { Shield } from "lucide-react";
 
@@ -24,7 +25,7 @@ export default function SettingsPage() {
         <div
           className="pointer-events-none fixed inset-0 z-0 bg-app-photo-backdrop"
           style={{
-            backgroundImage: "url(/bg.png)",
+            backgroundImage: `url(${BG_HERO_SRC})`,
             backgroundAttachment: "fixed",
             filter: "saturate(0.5) brightness(1.05)",
           }}

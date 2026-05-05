@@ -11,6 +11,7 @@ import {
 import { LandingParallaxDecor } from "@/components/landing/LandingParallaxDecor";
 import { AnalyticsInit } from "@/components/layout/AnalyticsInit";
 import { SeamlessParallaxBackground } from "@/components/layout/SeamlessParallaxBackground";
+import { BG_HERO_SRC } from "@/lib/siteAssets";
 
 function RootLayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -27,7 +28,7 @@ function RootLayoutShell({ children }: { children: React.ReactNode }) {
           {isLandingPage ? (
             <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
               <SeamlessParallaxBackground
-                imageUrl="/bg.png"
+                imageUrl={BG_HERO_SRC}
                 durationSec={150}
                 imageFilter="saturate(0.5) brightness(1.05)"
                 wrapperClassName="absolute inset-0"
@@ -36,8 +37,8 @@ function RootLayoutShell({ children }: { children: React.ReactNode }) {
           ) : (
             <div
               className="pointer-events-none fixed inset-0 z-0 bg-app-photo-backdrop"
-              style={{
-                backgroundImage: "url(/bg.png)",
+                style={{
+                  backgroundImage: `url(${BG_HERO_SRC})`,
                 backgroundAttachment: "fixed",
                 filter: "saturate(0.5) brightness(1.05)",
               }}
