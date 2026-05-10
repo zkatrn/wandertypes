@@ -10,9 +10,9 @@ export const metadata: Metadata = {
   description:
     "Discover your WanderType in a short quiz — then compare destinations on VoyageBlitz matched to your travel personality.",
   icons: {
-    icon: [{ url: "/submarine.png", type: "image/png" }],
-    shortcut: "/submarine.png",
-    apple: "/submarine.png",
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
   },
 };
 
