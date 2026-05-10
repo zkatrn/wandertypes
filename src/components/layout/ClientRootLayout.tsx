@@ -1,60 +1,34 @@
 "use client";
 
-import { Suspense } from "react";
 import { usePathname } from "next/navigation";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import {
-  FullScreenLoadingProvider,
-  useFullScreenLoading,
-} from "@/context/FullScreenLoadingContext";
 import { LandingParallaxDecor } from "@/components/landing/LandingParallaxDecor";
-import { AnalyticsInit } from "@/components/layout/AnalyticsInit";
-import { SeamlessParallaxBackground } from "@/components/layout/SeamlessParallaxBackground";
-import { BG_HERO_SRC } from "@/lib/siteAssets";
 
 function RootLayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { active: fullScreenLoading } = useFullScreenLoading();
-  const isOnboardingPage = pathname === "/" || pathname?.startsWith("/survey");
-  const isLandingPage = pathname === "/";
-  const showHeader = !isOnboardingPage && !fullScreenLoading;
-  const showFooter =
-    !fullScreenLoading && (!isOnboardingPage || isLandingPage);
+  const isWanderTypesSurface =
+    pathname === "/" ||
+    pathname === "/quiz" ||
+    pathname === "/types" ||
+    pathname?.startsWith("/result/");
+
   return (
     <>
-      {isOnboardingPage && (
+      {isWanderTypesSurface && (
         <>
-          {isLandingPage ? (
-            <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-              <SeamlessParallaxBackground
-                imageUrl={BG_HERO_SRC}
-                durationSec={150}
-                imageFilter="saturate(0.5) brightness(1.05)"
-                wrapperClassName="absolute inset-0"
-              />
-            </div>
-          ) : (
-            <div
-              className="pointer-events-none fixed inset-0 z-0 bg-app-photo-backdrop"
-                style={{
-                  backgroundImage: `url(${BG_HERO_SRC})`,
-                backgroundAttachment: "fixed",
-                filter: "saturate(0.5) brightness(1.05)",
-              }}
-            />
-          )}
-          <div className="pointer-events-none fixed inset-0 z-0 bg-white/25" />
+          <div
+            className="pointer-events-none fixed inset-0 z-0 bg-[#0f0c29]"
+            style={{
+              backgroundImage:
+                "radial-gradient(ellipse 100% 70% at 50% -15%, rgba(255, 217, 125, 0.07), transparent 42%), linear-gradient(180deg, #141233 0%, #0f0c29 45%, #08071a 100%)",
+            }}
+            aria-hidden
+          />
+          <LandingParallaxDecor />
         </>
       )}
 
       <div className="relative z-10">
-        {isOnboardingPage && isLandingPage && <LandingParallaxDecor />}
-        <div className="relative z-10">
-          {showHeader && <Header />}
-          {children}
-          {showFooter && <Footer />}
-        </div>
+        <div className="relative z-10">{children}</div>
       </div>
     </>
   );
@@ -63,12 +37,5 @@ function RootLayoutShell({ children }: { children: React.ReactNode }) {
 export function ClientRootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <FullScreenLoadingProvider>
-      <Suspense fallback={null}>
-        <AnalyticsInit />
-      </Suspense>
-      <RootLayoutShell>{children}</RootLayoutShell>
-    </FullScreenLoadingProvider>
-  );
+  return <RootLayoutShell>{children}</RootLayoutShell>;
 }

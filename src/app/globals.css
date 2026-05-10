@@ -12,7 +12,7 @@
 }
 
 html {
-  background: var(--background);
+  background: #0f0c29;
   overscroll-behavior: none;
 }
 
@@ -23,62 +23,6 @@ body {
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, sans-serif;
   overscroll-behavior: none;
-}
-
-/*
- * Full-viewport photo layers: slightly taller than the viewport (overscan),
- * tile on the X axis only so ultra-wide screens don’t get vertical striping
- * from `background-size: cover`.
- */
-.bg-app-photo-backdrop {
-  background-repeat: repeat-x;
-  background-position: center center;
-  background-size: auto 118%;
-}
-
-/*
- * Infinite horizontal drift — one direction, seamless loop (dual-panel translate).
- * Used by SeamlessParallaxBackground; duration via --seamless-parallax-duration.
- */
-@keyframes seamlessParallaxDrift {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
-.seamless-parallax-track {
-  animation: seamlessParallaxDrift var(--seamless-parallax-duration, 150s)
-    linear infinite;
-  will-change: transform;
-}
-
-/*
- * Phones / narrow viewports: one centered cover crop instead of repeat-x.
- * Art like /bg.png is not edge-seamless when tiled; pan + repeat shows a vertical join line.
- */
-@media (max-width: 767px) {
-  .bg-app-photo-backdrop {
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center center;
-    /* Beats inline `fixed` on survey — iOS paints fixed backgrounds poorly. */
-    background-attachment: scroll !important;
-  }
-
-  .seamless-parallax-track {
-    animation: none;
-    transform: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .seamless-parallax-track {
-    animation: none;
-    transform: none;
-  }
 }
 
 /* Twinkling stars animation */
@@ -117,7 +61,7 @@ body {
   );
 }
 
-/* Fixed stars + clouds: same stack as hero transparency, below inner z-10 shell */
+/* Fixed stars + drifting vessels: same stack as hero transparency, below inner z-10 shell */
 .lpd-root {
   position: fixed;
   inset: 0;
@@ -150,45 +94,66 @@ body {
   }
 }
 
-.lpd-clouds {
+.lpd-sea {
   position: absolute;
   inset: 0;
   overflow: hidden;
 }
 
-/* One emoji per layer; motion uses vw so clouds enter fully off the right edge */
-.lpd-cloud {
+/*
+ * Sailboats & ships drift right → left (same track as former clouds).
+ * --vessel-scale tweaks perceived distance; subtle bob suggests water.
+ */
+.lpd-vessel {
   position: absolute;
   left: 0;
   opacity: 0;
-  font-size: clamp(48px, 8vw, 88px);
-  line-height: 1;
+  line-height: 0;
   white-space: nowrap;
-  filter: drop-shadow(0 4px 20px rgba(8, 11, 40, 0.25));
-  animation: lpdCloudDrift var(--cd, 20s) linear infinite;
+  transform-origin: center bottom;
+  /* Reserve height even when `<img>` fails to load (missing file → 0×0 otherwise). */
+  min-height: var(--vessel-h, clamp(32px, 6vw, 72px));
+  display: flex;
+  align-items: flex-end;
+  filter: drop-shadow(0 3px 14px rgba(15, 12, 41, 0.35))
+    drop-shadow(0 8px 24px rgba(42, 111, 143, 0.18));
+  animation: lpdVesselDrift var(--cd, 45s) linear infinite;
   animation-delay: var(--cdelay, 0s);
 }
 
-@keyframes lpdCloudDrift {
+.lpd-vessel img {
+  display: block;
+  height: var(--vessel-h, clamp(32px, 6vw, 72px));
+  width: auto;
+  max-width: none;
+  min-height: var(--vessel-h, clamp(32px, 6vw, 72px));
+  object-fit: contain;
+  pointer-events: none;
+}
+
+@keyframes lpdVesselDrift {
   0% {
-    transform: translateX(calc(100vw + 72px));
+    transform: translateX(calc(100vw + 96px)) translateY(0) rotate(-1deg);
     opacity: 0;
   }
-  10% {
-    opacity: 0.42;
+  8% {
+    opacity: 0.62;
   }
-  90% {
-    opacity: 0.42;
+  50% {
+    transform: translateX(calc(50vw - 40px)) translateY(-6px) rotate(1.5deg);
+  }
+  92% {
+    opacity: 0.62;
   }
   100% {
-    transform: translateX(-96px);
+    transform: translateX(-112px) translateY(2px) rotate(-0.5deg);
     opacity: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .lpd-star,
-  .lpd-cloud {
+  .lpd-vessel {
     animation: none !important;
   }
 
@@ -196,8 +161,8 @@ body {
     opacity: 0.35;
   }
 
-  .lpd-cloud {
-    opacity: 0.25;
-    transform: none;
+  .lpd-vessel {
+    opacity: 0.28;
+    transform: translateX(35vw);
   }
 }

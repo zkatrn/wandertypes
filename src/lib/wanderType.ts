@@ -121,8 +121,8 @@ export const WANDERTYPES: Record<WandertypeKey, Wandertype> = {
   slow_romance: {
     key: "slow_romance",
     name: "The Romantic",
-    emoji: "💑",
-    title: "💑 The Romantic",
+    emoji: "💕",
+    title: "💕 The Romantic",
     subtitle: "I want this trip to feel like a memory we'll talk about forever.",
     description:
       "Every detail matters — the right table, the right light, the view from the right window. You're not chasing activities; you're chasing atmosphere. You want the trip to feel cinematic, intimate, and quietly unforgettable. Less itinerary, more love story.",
@@ -185,17 +185,3 @@ export const WANDERTYPES: Record<WandertypeKey, Wandertype> = {
   },
 
 };
-
-/** Copy shown on TripInterpretation for this theme — single source of truth with WANDERTYPES. */
-export function getInterpretationCopyForWandertype(key: WandertypeKey): {
-  travelArchetype: string;
-  archetypeDescription: string;
-  emotionalGoal: string;
-} {
-  const w = WANDERTYPES[key];
-  return {
-    travelArchetype: w.name,
-    archetypeDescription: w.description,
-    emotionalGoal: w.subtitle,
-  };
-}

@@ -1,32 +1,12 @@
 import type { NextConfig } from "next";
+import path from "path";
 
+/**
+ * Pin tracing root to this app when another lockfile exists higher in the tree
+ * (avoids wrong workspace detection + odd peer resolution for optional deps).
+ */
 const nextConfig: NextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "*.googleusercontent.com",
-      },
-    ],
-  },
-  /**
-   * Lets Firebase `signInWithPopup` close the Google OAuth window without
-   * "Cross-Origin-Opener-Policy policy would block the window.close call".
-   * See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Opener-Policy
-   */
-  async headers() {
-    return [
-      {
-        source: "/:path*",
-        headers: [
-          {
-            key: "Cross-Origin-Opener-Policy",
-            value: "same-origin-allow-popups",
-          },
-        ],
-      },
-    ];
-  },
+  outputFileTracingRoot: path.join(__dirname),
 };
 
 export default nextConfig;

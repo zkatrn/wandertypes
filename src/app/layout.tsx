@@ -4,11 +4,16 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "VoyageBlitz — Your trip, matched to you",
-    template: "%s · VoyageBlitz",
+    default: "WanderTypes — What kind of traveler are you?",
+    template: "%s · WanderTypes",
   },
   description:
-    "Survey-first travel assistant: find your Wandertype, compare destinations, and decide with confidence.",
+    "Discover your WanderType in a short quiz — then compare destinations on VoyageBlitz matched to your travel personality.",
+  icons: {
+    icon: [{ url: "/submarine.png", type: "image/png" }],
+    shortcut: "/submarine.png",
+    apple: "/submarine.png",
+  },
 };
 
 export default function RootLayout({
