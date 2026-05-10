@@ -48,7 +48,7 @@ export function QuizPageClient() {
     router.push(`/result/${resolveWandertypeKey(scores)}`);
   };
 
-  /** Choosing an answer advances immediately; Next is only for moving forward after Back. */
+  /** Choosing an answer advances immediately except on the final question — result opens via “See my result”. */
   const selectOption = (optionIndex: number) => {
     setSelections((prev) => {
       const next = [...prev];
@@ -58,14 +58,7 @@ export function QuizPageClient() {
 
     if (step < total - 1) {
       setStep((s) => s + 1);
-      return;
     }
-
-    const complete = selections.map((x, i) =>
-      i === step ? optionIndex : x,
-    );
-    if (!complete.every((x): x is number => typeof x === "number")) return;
-    submitQuiz(complete);
   };
 
   const goBack = () => {
